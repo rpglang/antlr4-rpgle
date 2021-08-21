@@ -1,5 +1,6 @@
 package org.rpgleparser.integration;
 
+import static java.util.ResourceBundle.getBundle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -33,26 +35,17 @@ import org.rpgleparser.utils.TreeUtils;
  *
  */
 public class TestFiles {
-	
-	File sourceFile;
-	boolean autoReplaceFailed=false;
+
+	static boolean autoReplaceFailed=false;
 	static String singleTestName=null;
 	static{
 		try{
-			singleTestName= getBundle("org.rpgleparser.tests.test").getString("RunSingleTest");
+			ResourceBundle props = getBundle("org.rpgleparser.tests.test");
+			autoReplaceFailed = ("Y").equalsIgnoreCase(props.getString("AutoReplaceFailedTestResults"));
+			singleTestName = props.getString("RunSingleTest");
 		}catch(Exception ignored){}
 	}
 
-	public TestFiles(File sourceFile) {
-		super();
-		this.sourceFile = sourceFile;
-		try{
-			autoReplaceFailed="Y".equalsIgnoreCase(getBundle("org.rpgleparser.tests.test").getString("AutoReplaceFailedTestResults"));
-		}catch(Exception e){}
-	}
-	
-	@Test
-	public void test() throws IOException, URISyntaxException{
 	@ParameterizedTest(name = "{index}{0}")
 	@MethodSource("primeNumbers")
 	public void test(File sourceFile) throws IOException, URISyntaxException{
