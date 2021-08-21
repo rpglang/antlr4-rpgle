@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'antlr'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group 'io.github.rpglang'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // ANTLR
+    antlr "org.antlr:antlr4:4.9.2"
+    implementation "org.antlr:antlr4-runtime:4.9.2"
+
+    // JUnit5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+//compileKotlin dependsOn generateGrammarSource
+//compileTestKotlin dependsOn generateGrammarSource
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-visitor", "-long-messages"]
+}
