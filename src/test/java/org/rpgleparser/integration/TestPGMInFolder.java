@@ -1,17 +1,15 @@
 package org.rpgleparser.integration;
 
 import org.antlr.v4.runtime.CommonToken;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.rpgleparser.utils.TestUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestPGMInFolder {
 
@@ -21,11 +19,11 @@ public class TestPGMInFolder {
         rpgsource = TestUtils.padSourceLines(rpgsource, false);
         List<String> errors = new ArrayList<String>();
         List<CommonToken> tokenList = TestUtils.getParsedTokens(rpgsource, errors);
-        assertThat(errors, is(empty()));
+        assertTrue(errors.isEmpty());
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testAllRpgSources() throws Exception {
         List<String> errors = new ArrayList<String>();
         List<String> files = new ArrayList<String>();
@@ -46,7 +44,7 @@ public class TestPGMInFolder {
                 }
             }
         }
-        assertThat(errors, is(empty()));
+        assertTrue(errors.isEmpty());
     }
 
     private String getResourcePath(String resourcePath) {

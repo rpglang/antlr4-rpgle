@@ -1,6 +1,6 @@
 package org.rpgleparser;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.rpgleparser.utils.TestUtils.expectTokensForFreeSnippet;
 import static org.rpgleparser.utils.TestUtils.expectTokensForSourceLines;

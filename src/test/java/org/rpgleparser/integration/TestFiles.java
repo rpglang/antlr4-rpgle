@@ -1,27 +1,24 @@
 package org.rpgleparser.integration;
 
-import static java.util.ResourceBundle.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.rpgleparser.RpgLexer;
 import org.rpgleparser.RpgParser;
 import org.rpgleparser.tokens.PreprocessTokenSource;
@@ -35,7 +32,6 @@ import org.rpgleparser.utils.TreeUtils;
  * @author ryaneberly
  *
  */
-@RunWith(Parameterized.class)
 public class TestFiles {
 	
 	File sourceFile;
@@ -57,6 +53,9 @@ public class TestFiles {
 	
 	@Test
 	public void test() throws IOException, URISyntaxException{
+	@ParameterizedTest(name = "{index}{0}")
+	@MethodSource("primeNumbers")
+	public void test(File sourceFile) throws IOException, URISyntaxException{
 		final String inputString = TestUtils.loadFile(sourceFile);
 		final File expectedFile = new File(sourceFile.getPath().replaceAll("\\.rpgle", ".expected.txt"));
 		final String expectedFileText = expectedFile.exists()?TestUtils.loadFile(expectedFile):null;
@@ -67,35 +66,35 @@ public class TestFiles {
 		final RpgLexer rpglexer = new RpgLexer(input);
         final TokenSource lexer = new PreprocessTokenSource(rpglexer);
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
-                
+
         final RpgParser parser = new RpgParser(tokens);
 
         final ErrorListener errorListener = new ErrorListener(errors, rpglexer, parser);
         rpglexer.addErrorListener(errorListener);
         parser.addErrorListener(errorListener);
-        
+
 		final String actualTokens = TestUtils.printTokens(lexer,rpglexer.getVocabulary());
         boolean rewriteExpectFile=false;
 		if(expectedTokens != null && expectedTokens.trim().length()>0 ){
 			if(autoReplaceFailed && !expectedTokens.equals(actualTokens)){
 				rewriteExpectFile=true;
 			}else{
-				assertEquals("Token lists do not match",expectedTokens,actualTokens);
+				assertEquals(expectedTokens, actualTokens, "Token lists do not match");
 			}
 		}
 		rpglexer.reset();
-		
+
 		parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
 		parser.reset();
 		final ParseTree parseTree = parser.r();
-		
+
 		final String actualTree = TreeUtils.printTree(parseTree, parser);
 		if(!errors.isEmpty()){
 			System.out.println("/*===TOKENS===*/\r\n" + actualTokens + "\r\n");
 			System.out.println("/*===TREE===*/\r\n" + actualTree + "\r\n/*======*/");
 		}
-		assertThat(errors, is(empty()));
-		
+		assertTrue(errors.isEmpty());
+
     	if(expectedTree==null || expectedTree.trim().length() == 0||rewriteExpectFile){
     		writeExpectFile(expectedFile,actualTokens,actualTree);
     		System.out.println("Tree written to " + expectedFile);
@@ -105,7 +104,7 @@ public class TestFiles {
 				expectedTree = actualTree;
 				writeExpectFile(expectedFile,actualTokens,actualTree);
 			}
-        	assertEquals("Parse trees do not match",expectedTree,actualTree);
+        	assertEquals(expectedTree, actualTree, "Parse trees do not match");
         }
 	}
 
@@ -118,13 +117,9 @@ public class TestFiles {
 		fos.write(actualTree.getBytes());
 		fos.write("\r\n/*======*/".getBytes());
 		fos.close();
-		
+
 	}
 
-	public static String printTokens(RpgLexer lexer){
-    	return TestUtils.getTokenString(lexer.getAllTokens(), lexer.getVocabulary());
-    }
-    
 	private String getTokens(String expectedFileText) {
 		if(expectedFileText != null && expectedFileText.contains("/*===TOKENS===*/")){
 			int startIdx = expectedFileText.indexOf("/*===TOKENS===*/") + 16;
@@ -162,17 +157,12 @@ public class TestFiles {
 		return expectedFileText;
 	}
 
-	@Parameterized.Parameters(name="{index}{0}")
-	public static Collection<Object[]> primeNumbers() throws URISyntaxException, IOException {
-		final ArrayList<Object[]> retval = new ArrayList<Object[]>();
-    	final List<File> listing = new ArrayList<File>();
+	public static Stream<File> primeNumbers() throws URISyntaxException, IOException {
+    	final List<File> listing = new ArrayList<>();
     	fillResourceListing(new File("src/test/resources/org/rpgleparser/tests"), listing);
-    	for(File s: listing){
-			retval.add(new Object[]{s});
-		}
-		return retval;
+		return listing.stream();
 	}
-	
+
 	private static void fillResourceListing(File file, List<File> retval)  {
     	if(file != null){
     		if(file.isDirectory()){
