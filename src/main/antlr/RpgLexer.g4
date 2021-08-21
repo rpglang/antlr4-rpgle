@@ -28,24 +28,24 @@ LEAD_WS5_Comments :  WORD5 {getCharPositionInLine()==5}? -> channel(HIDDEN);
 FREE_SPEC : {getCharPositionInLine()==5}? [  ] -> pushMode(OpCode),skip;
     // 6th position asterisk is a comment
 COMMENT_SPEC_FIXED : {getCharPositionInLine()==5}? .'*' -> pushMode(FIXED_CommentMode),channel(HIDDEN) ;
-    // X specs 
-DS_FIXED : [dD] {getCharPositionInLine()==6}? -> pushMode(FIXED_DefSpec) ; 
-FS_FIXED : [fF] {getCharPositionInLine()==6}? -> pushMode(FIXED_FileSpec) ;
-OS_FIXED : [oO] {getCharPositionInLine()==6}? -> pushMode(FIXED_OutputSpec) ;
-CS_FIXED : [cC] {getCharPositionInLine()==6}? -> pushMode(FIXED_CalcSpec),pushMode(OnOffIndicatorMode),pushMode(IndicatorMode) ;
-CS_ExecSQL:[cC] '/' {getCharPositionInLine()==7}? EXEC_SQL -> pushMode(FIXED_CalcSpec_SQL);
-IS_FIXED : [iI] {getCharPositionInLine()==6}? -> pushMode(FIXED_InputSpec) ;
-PS_FIXED : [pP] {getCharPositionInLine()==6}? -> pushMode(FIXED_ProcedureSpec) ;
-HS_FIXED : [hH] {getCharPositionInLine()==6}? -> pushMode(HeaderSpecMode) ;
+    // X specs
+DS_FIXED : D {getCharPositionInLine()==6}? -> pushMode(FIXED_DefSpec) ;
+FS_FIXED : F {getCharPositionInLine()==6}? -> pushMode(FIXED_FileSpec) ;
+OS_FIXED : O {getCharPositionInLine()==6}? -> pushMode(FIXED_OutputSpec) ;
+CS_FIXED : C {getCharPositionInLine()==6}? -> pushMode(FIXED_CalcSpec),pushMode(OnOffIndicatorMode),pushMode(IndicatorMode) ;
+CS_ExecSQL:C  '/' {getCharPositionInLine()==7}? EXEC_SQL -> pushMode(FIXED_CalcSpec_SQL);
+IS_FIXED : I {getCharPositionInLine()==6}? -> pushMode(FIXED_InputSpec) ;
+PS_FIXED : P {getCharPositionInLine()==6}? -> pushMode(FIXED_ProcedureSpec) ;
+HS_FIXED : H {getCharPositionInLine()==6}? -> pushMode(HeaderSpecMode) ;
 
 BLANK_LINE : [ ] {getCharPositionInLine()==6}? [ ]* NEWLINE -> skip;
 BLANK_SPEC_LINE1 : . NEWLINE {getCharPositionInLine()==7}?-> skip;
 BLANK_SPEC_LINE : .[ ] {getCharPositionInLine()==7}? [ ]* NEWLINE -> skip;
 COMMENTS : [ ] {getCharPositionInLine()>=6}? [ ]*? '//' -> pushMode(FIXED_CommentMode),channel(HIDDEN) ;
-EMPTY_LINE : 
-	'                                                                           ' 
+EMPTY_LINE :
+	'                                                                           '
 	{getCharPositionInLine()>=80}? -> pushMode(FIXED_CommentMode),channel(HIDDEN) ;
-	
+
 	//Directives are not necessarily blank at pos 5
 DIRECTIVE :  . {getCharPositionInLine()>=6}? [ ]*? '/' -> pushMode(DirectiveMode) ;
 
@@ -64,24 +64,24 @@ TITLE_Text : ~[\r\n]+ -> type(DIR_OtherText);
 TITLE_EOL : NEWLINE -> type(EOL),popMode,popMode;
 
 mode DirectiveMode;
-DIR_NOT: [nN][oO][tT];
-DIR_DEFINED: [dD][eE][fF][iI][nN][eE][dD];
-DIR_FREE: {_input.LA(-1)=='/'}? [fF][rR][eE][eE] -> pushMode(SKIP_REMAINING_WS);
-DIR_ENDFREE: {_input.LA(-1)=='/'}? [eE][nN][dD] '-' [fF][rR][eE][eE] -> pushMode(SKIP_REMAINING_WS);
-DIR_TITLE:{_input.LA(-1)=='/'}? ([tT][iI][tT][lL][eE]) -> pushMode(DirectiveTitle);
-DIR_EJECT: {_input.LA(-1)=='/'}? [eE][jJ][eE][cC][tT] -> pushMode(SKIP_REMAINING_WS);
-DIR_SPACE: {_input.LA(-1)=='/'}? [sS][pP][aA][cC][eE];
-DIR_SET: {_input.LA(-1)=='/'}?  [sS][eE][tT];
-DIR_RESTORE: {_input.LA(-1)=='/'}? [rR][eE][sS][tT][oO][rR][eE];
-DIR_COPY: {_input.LA(-1)=='/'}? [cC][oO][pP][yY];
-DIR_INCLUDE: {_input.LA(-1)=='/'}? [iI][nN][cC][lL][uU][dD][eE];
-DIR_EOF: {_input.LA(-1)=='/'}? [eE][oO][fF];
-DIR_DEFINE: {_input.LA(-1)=='/'}? ([dD][eE][fF][iI][nN][eE]);
-DIR_UNDEFINE: {_input.LA(-1)=='/'}? ([uU][nN][dD][eE][fF][iI][nN][eE]);
-DIR_IF: {_input.LA(-1)=='/'}? ([iI][fF]);
-DIR_ELSE: {_input.LA(-1)=='/'}? ([eE][lL][sS][eE]);
-DIR_ELSEIF: {_input.LA(-1)=='/'}? ([eE][lL][sS][eE][iI][fF]);
-DIR_ENDIF: {_input.LA(-1)=='/'}? ([eE][nN][dD][iI][fF]);
+DIR_NOT: N O T ;
+DIR_DEFINED: D E F I N E D ;
+DIR_FREE: {_input.LA(-1)=='/'}? F R E E  -> pushMode(SKIP_REMAINING_WS);
+DIR_ENDFREE: {_input.LA(-1)=='/'}? E N D  '-' F R E E  -> pushMode(SKIP_REMAINING_WS);
+DIR_TITLE:{_input.LA(-1)=='/'}? (T I T L E ) -> pushMode(DirectiveTitle);
+DIR_EJECT: {_input.LA(-1)=='/'}? E J E C T  -> pushMode(SKIP_REMAINING_WS);
+DIR_SPACE: {_input.LA(-1)=='/'}? S P A C E ;
+DIR_SET: {_input.LA(-1)=='/'}?  S E T ;
+DIR_RESTORE: {_input.LA(-1)=='/'}? R E S T O R E ;
+DIR_COPY: {_input.LA(-1)=='/'}? C O P Y ;
+DIR_INCLUDE: {_input.LA(-1)=='/'}? I N C L U D E ;
+DIR_EOF: {_input.LA(-1)=='/'}? E O F ;
+DIR_DEFINE: {_input.LA(-1)=='/'}? (D E F I N E );
+DIR_UNDEFINE: {_input.LA(-1)=='/'}? (U N D E F I N E );
+DIR_IF: {_input.LA(-1)=='/'}? (I F );
+DIR_ELSE: {_input.LA(-1)=='/'}? (E L S E );
+DIR_ELSEIF: {_input.LA(-1)=='/'}? (E L S E I F );
+DIR_ENDIF: {_input.LA(-1)=='/'}? (E N D I F );
 DIR_Number: NUMBER -> type(NUMBER);
 DIR_WhiteSpace: [ ] -> type(WS),skip;
 DIR_OtherText : ~[/'"\r\n \t,()]+ ;
@@ -98,407 +98,407 @@ DIR_FREE_OTHER_TEXT: ~[\r\n]* -> popMode,skip;
 
 mode EndOfSourceMode;
 EOS_Text : ~[\r\n]+ ;
-EOS_EOL : NEWLINE -> type(EOL); 
+EOS_EOL : NEWLINE -> type(EOL);
 
 // -----------------  ---------------------
 mode OpCode;
 OP_WS: [ \t] {getCharPositionInLine()>6}? [ \t]* -> skip;
-OP_ACQ: [Aa][Cc][Qq] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_BEGSR: [Bb][Ee][Gg][Ss][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_CALLP: [Cc][Aa][Ll][Ll][Pp] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_CHAIN: [Cc][Hh][Aa][Ii][Nn] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_CLEAR: [Cc][Ll][Ee][Aa][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_CLOSE: [Cc][Ll][Oo][Ss][Ee] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_COMMIT: [Cc][Oo][Mm][Mm][Ii][Tt] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_DEALLOC: [Dd][Ee][Aa][Ll][Ll][Oo][Cc] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_DELETE: [Dd][Ee][Ll][Ee][Tt][Ee] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_DOU: [Dd][Oo][Uu] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_DOW: [Dd][Oo][Ww] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_DSPLY: [Dd][Ss][Pp][Ll][Yy] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_DUMP: [Dd][Uu][Mm][Pp] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_ELSE: [Ee][Ll][Ss][Ee] {isEndOfToken()}?-> mode(FREE);
-OP_ELSEIF: [Ee][Ll][Ss][Ee][Ii][Ff] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_ENDDO: [Ee][Nn][Dd][Dd][Oo] {isEndOfToken()}?-> mode(FREE);
-OP_ENDFOR: [Ee][Nn][Dd][Ff][Oo][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_ENDIF: [Ee][Nn][Dd][Ii][Ff] {isEndOfToken()}?-> mode(FREE);
-OP_ENDMON: [Ee][Nn][Dd][Mm][Oo][Nn] {isEndOfToken()}?-> mode(FREE);
-OP_ENDSL: [Ee][Nn][Dd][Ss][Ll] {isEndOfToken()}?-> mode(FREE);
-OP_ENDSR: [Ee][Nn][Dd][Ss][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_EVAL: [Ee][Vv][Aa][Ll] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_EVALR: [Ee][Vv][Aa][Ll][Rr] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_EVAL_CORR: [Ee][Vv][Aa][Ll][-][Cc][Oo][Rr][Rr] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_EXCEPT: [Ee][Xx][Cc][Ee][Pp][Tt] {isEndOfToken()}?-> mode(FREE);
-OP_EXFMT: [Ee][Xx][Ff][Mm][Tt] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_EXSR: [Ee][Xx][Ss][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_FEOD: [Ff][Ee][Oo][Dd] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_FOR: [Ff][Oo][Rr] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_FORCE: [Ff][Oo][Rr][Cc][Ee] {isEndOfToken()}?-> mode(FREE);
-OP_IF: [Ii][Ff] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_IN: [Ii][Nn] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_ITER: [Ii][Tt][Ee][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_LEAVE: [Ll][Ee][Aa][Vv][Ee] {isEndOfToken()}?-> mode(FREE);
-OP_LEAVESR: [Ll][Ee][Aa][Vv][Ee][Ss][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_MONITOR: [Mm][Oo][Nn][Ii][Tt][Oo][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_NEXT: [Nn][Ee][Xx][Tt] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_ON_ERROR: [Oo][Nn][-][Ee][Rr][Rr][Oo][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_OPEN: [Oo][Pp][Ee][Nn] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_OTHER: [Oo][Tt][Hh][Ee][Rr] {isEndOfToken()}?-> mode(FREE);
-OP_OUT: [Oo][Uu][Tt] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_POST: [Pp][Oo][Ss][Tt] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_READ: [Rr][Ee][Aa][Dd] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_READC: [Rr][Ee][Aa][Dd][Cc] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_READE: [Rr][Ee][Aa][Dd][Ee] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_READP: [Rr][Ee][Aa][Dd][Pp] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_READPE: [Rr][Ee][Aa][Dd][Pp][Ee] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_REL: [Rr][Ee][Ll] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_RESET: [Rr][Ee][Ss][Ee][Tt] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_RETURN: [Rr][Ee][Tt][Uu][Rr][Nn] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_ROLBK: [Rr][Oo][Ll][Bb][Kk] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_SELECT: [Ss][Ee][Ll][Ee][Cc][Tt] {isEndOfToken()}?-> mode(FREE);
-OP_SETGT: [Ss][Ee][Tt][Gg][Tt] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_SETLL: [Ss][Ee][Tt][Ll][Ll] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_SORTA: [Ss][Oo][Rr][Tt][Aa] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_TEST: [Tt][Ee][Ss][Tt] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_UNLOCK: [Uu][Nn][Ll][Oo][Cc][Kk] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_UPDATE: [Uu][Pp][Dd][Aa][Tt][Ee] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_WHEN: [Ww][Hh][Ee][Nn] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_WRITE: [Ww][Rr][Ii][Tt][Ee] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_XML_INTO: [Xx][Mm][Ll][-][Ii][Nn][Tt][Oo] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
-OP_XML_SAX: [Xx][Mm][Ll][-][Ss][Aa][Xx] {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_ACQ: A C Q {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_BEGSR: B E G S R {isEndOfToken()}?-> mode(FREE);
+OP_CALLP: C A L L P {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_CHAIN: C H A I N {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_CLEAR: C L E A R {isEndOfToken()}?-> mode(FREE);
+OP_CLOSE: C L O S E {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_COMMIT: C O M M I T {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_DEALLOC: D E A L L O C {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_DELETE: D E L E T E {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_DOU: D O U {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_DOW: D O W {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_DSPLY: D S P L Y {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_DUMP: D U M P {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_ELSE: E L S E {isEndOfToken()}?-> mode(FREE);
+OP_ELSEIF: E L S E I F {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_ENDDO: E N D D O {isEndOfToken()}?-> mode(FREE);
+OP_ENDFOR: E N D F O R {isEndOfToken()}?-> mode(FREE);
+OP_ENDIF: E N D I F {isEndOfToken()}?-> mode(FREE);
+OP_ENDMON: E N D M O N {isEndOfToken()}?-> mode(FREE);
+OP_ENDSL: E N D S L {isEndOfToken()}?-> mode(FREE);
+OP_ENDSR: E N D S R {isEndOfToken()}?-> mode(FREE);
+OP_EVAL: E V A L {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_EVALR: E V A L R {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_EVAL_CORR: E V A L [-]C O R R {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_EXCEPT: E X C E P T {isEndOfToken()}?-> mode(FREE);
+OP_EXFMT: E X F M T {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_EXSR: E X S R {isEndOfToken()}?-> mode(FREE);
+OP_FEOD: F E O D {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_FOR: F O R {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_FORCE: F O R C E {isEndOfToken()}?-> mode(FREE);
+OP_IF: I F {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_IN: I N {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_ITER: I T E R {isEndOfToken()}?-> mode(FREE);
+OP_LEAVE: L E A V E {isEndOfToken()}?-> mode(FREE);
+OP_LEAVESR: L E A V E S R {isEndOfToken()}?-> mode(FREE);
+OP_MONITOR: M O N I T O R {isEndOfToken()}?-> mode(FREE);
+OP_NEXT: N E X T {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_ON_ERROR: O N [-]E R R O R {isEndOfToken()}?-> mode(FREE);
+OP_OPEN: O P E N {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_OTHER: O T H E R {isEndOfToken()}?-> mode(FREE);
+OP_OUT: O U T {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_POST: P O S T {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_READ: R E A D {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_READC: R E A D C {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_READE: R E A D E {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_READP: R E A D P {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_READPE: R E A D P E {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_REL: R E L {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_RESET: R E S E T {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_RETURN: R E T U R N {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_ROLBK: R O L B K {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_SELECT: S E L E C T {isEndOfToken()}?-> mode(FREE);
+OP_SETGT: S E T G T {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_SETLL: S E T L L {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_SORTA: S O R T A {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_TEST: T E S T {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_UNLOCK: U N L O C K {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_UPDATE: U P D A T E {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_WHEN: W H E N {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_WRITE: W R I T E {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_XML_INTO: X M L [-]I N T O {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
+OP_XML_SAX: X M L [-]S A X {isEndOfToken()}?-> mode(FREE),pushMode(FreeOpExtender);
 OP_NoSpace: -> skip,mode(FREE);//,pushMode(FreeOpExtender);
 
 mode FREE;
-//OP_COMMIT: [Cc][Oo][Mm][Mm][Ii][Tt] -> mode(FREE),pushMode(FreeOpExtender);
-DS_Standalone : [dD] [cC] [lL] '-' [sS] ;//-> pushMode(F_SPEC_FREE);
-DS_DataStructureStart : [dD] [cC] [lL] '-' [dD][sS] ;//-> pushMode(F_SPEC_FREE);
-DS_DataStructureEnd : [eE] [nN] [dD] '-' [dD][sS] ;//-> pushMode(F_SPEC_FREE);
-DS_PrototypeStart : [dD] [cC] [lL] '-' [pP][rR] ;//-> pushMode(F_SPEC_FREE);
-DS_PrototypeEnd : [eE] [nN] [dD] '-' [pP][rR] ;//-> pushMode(F_SPEC_FREE);
-DS_Parm : [dD] [cC] [lL] '-' [pP][aA][rR][mM] ;
-DS_SubField : [dD] [cC] [lL] '-' [sS][uU][bB][fF] ;
-DS_ProcedureInterfaceStart : [dD] [cC] [lL] '-' [pP][iI] ;//-> pushMode(F_SPEC_FREE);
-DS_ProcedureInterfaceEnd : [eE] [nN] [dD] '-' [pP][iI] ;//-> pushMode(F_SPEC_FREE);
-DS_ProcedureStart : [dD] [cC] [lL] '-' [pP][rR][oO][cC] ;//-> pushMode(F_SPEC_FREE);
-DS_ProcedureEnd : [eE] [nN] [dD] '-' [pP][rR][oO][cC] ;//-> pushMode(F_SPEC_FREE);
-DS_Constant : [dD] [cC] [lL] '-' [cC] ;//-> pushMode(F_SPEC_FREE);
+//OP_COMMIT: C O M M I T  -> mode(FREE),pushMode(FreeOpExtender);
+DS_Standalone : D  C  L  '-' S  ;//-> pushMode(F_SPEC_FREE);
+DS_DataStructureStart : D  C  L  '-' D S  ;//-> pushMode(F_SPEC_FREE);
+DS_DataStructureEnd : E  N  D  '-' D S  ;//-> pushMode(F_SPEC_FREE);
+DS_PrototypeStart : D  C  L  '-' P R  ;//-> pushMode(F_SPEC_FREE);
+DS_PrototypeEnd : E  N  D  '-' P R  ;//-> pushMode(F_SPEC_FREE);
+DS_Parm : D  C  L  '-' P A R M  ;
+DS_SubField : D  C  L  '-' S U B F  ;
+DS_ProcedureInterfaceStart : D  C  L  '-' P I  ;//-> pushMode(F_SPEC_FREE);
+DS_ProcedureInterfaceEnd : E  N  D  '-' P I  ;//-> pushMode(F_SPEC_FREE);
+DS_ProcedureStart : D  C  L  '-' P R O C  ;//-> pushMode(F_SPEC_FREE);
+DS_ProcedureEnd : E  N  D  '-' P R O C  ;//-> pushMode(F_SPEC_FREE);
+DS_Constant : D  C  L  '-' C  ;//-> pushMode(F_SPEC_FREE);
 
-FS_FreeFile : [dD] [cC] [lL] '-' [fF] ;//-> pushMode(F_SPEC_FREE);
-H_SPEC : [cC] [tT] [lL] '-' [oO][pP][tT];
+FS_FreeFile : D  C  L  '-' F  ;//-> pushMode(F_SPEC_FREE);
+H_SPEC : C  T  L  '-' O P T ;
 FREE_CONT: '...' [ ]* NEWLINE WORD5[ ]+ {setText("...");} -> type(CONTINUATION);
 FREE_COMMENTS80 : ~[\r\n] {getCharPositionInLine()>80}? ~[\r\n]* -> channel(HIDDEN); // skip comments after 80
-EXEC_SQL: [Ee][Xx][Ee][Cc][ ]+[Ss][Qq][Ll]-> pushMode(SQL_MODE) ;
+EXEC_SQL: E X E C [ ]+S Q L -> pushMode(SQL_MODE) ;
 
 // Built In functions
-BIF_ABS: '%'[aA][bB][sS];
-BIF_ADDR: '%'[aA][dD][dD][rR];
-BIF_ALLOC: '%'[aA][lL][lL][oO][cC];
-BIF_BITAND: '%'[bB][iI][tT][aA][nN][dD];
-BIF_BITNOT: '%'[bB][iI][tT][nN][oO][tT];
-BIF_BITOR: '%'[bB][iI][tT][oO][rR];
-BIF_BITXOR: '%'[bB][iI][tT][xX][oO][rR];
-BIF_CHAR: '%'[cC][hH][aA][rR];
-BIF_CHECK: '%'[cC][hH][eE][cC][kK];
-BIF_CHECKR: '%'[cC][hH][eE][cC][kK][rR];
-BIF_DATE: '%'[dD][aA][tT][eE];
-BIF_DAYS: '%'[dD][aA][yY][sS];
-BIF_DEC: '%'[dD][eE][cC];
-BIF_DECH: '%'[dD][eE][cC][hH];
-BIF_DECPOS: '%'[dD][eE][cC][pP][oO][sS];
-BIF_DIFF: '%'[dD][iI][fF][fF];
-BIF_DIV: '%'[dD][iI][vV];
-BIF_EDITC: '%'[eE][dD][iI][tT][cC];
-BIF_EDITFLT: '%'[eE][dD][iI][tT][fF][lL][tT];
-BIF_EDITW: '%'[eE][dD][iI][tT][wW];
-BIF_ELEM: '%'[eE][lL][eE][mM];
-BIF_EOF: '%'[eE][oO][fF];
-BIF_EQUAL: '%'[eE][qQ][uU][aA][lL];
-BIF_ERROR: '%'[eE][rR][rR][oO][rR];
-BIF_FIELDS: '%'[fF][iI][eE][lL][dD][sS];
-BIF_FLOAT: '%'[fF][lL][oO][aA][tT];
-BIF_FOUND: '%'[fF][oO][uU][nN][dD];
-BIF_GRAPH: '%'[gG][rR][aA][pP][hH];
-BIF_HANDLER: '%'[hH][aA][nN][dD][lL][eE][rR];
-BIF_HOURS: '%'[hH][oO][uU][rR][sS];
-BIF_INT: '%'[iI][nN][tT];
-BIF_INTH: '%'[iI][nN][tT][hH];
-BIF_KDS: '%'[kK][dD][sS];
-BIF_LEN: '%'[lL][eE][nN];
-BIF_LOOKUP: '%'[lL][oO][oO][kK][uU][pP];
-BIF_LOOKUPLT: '%'[lL][oO][oO][kK][uU][pP][lL][tT];
-BIF_LOOKUPLE: '%'[lL][oO][oO][kK][uU][pP][lL][eE];
-BIF_LOOKUPGT: '%'[lL][oO][oO][kK][uU][pP][gG][tT];
-BIF_LOOKUPGE: '%'[lL][oO][oO][kK][uU][pP][gG][eE];
-BIF_MINUTES: '%'[mM][iI][nN][uU][tT][eE][sS];
-BIF_MONTHS: '%'[mM][oO][nN][tT][hH][sS];
-BIF_MSECONDS: '%'[mM][sS][eE][cC][oO][nN][dD][sS];
-BIF_NULLIND: '%'[nN][uU][lL][iI][nN][dD];
-BIF_OCCUR: '%'[oO][cC][uU][rR];
-BIF_OPEN: '%'[oO][pP][eE][nN];
-BIF_PADDR: '%'[pP][aA][dD][dD][rR];
-BIF_PARMS: '%'[pP][aA][rR][mM][sS];
-BIF_PARMNUM: '%'[pP][aA][rR][mM][nN][uU][mM];
-BIF_REALLOC: '%'[rR][eE][aA][lL][lL][oO][cC];
-BIF_REM: '%'[rR][eE][mM];
-BIF_REPLACE: '%'[rR][eE][pP][lL][aA][cC][eE];
-BIF_SCAN: '%'[sS][cC][aA][nN];
-BIF_SCANRPL: '%'[sS][cC][aA][nN][rR][pP][lL];
-BIF_SECONDS: '%'[sS][eE][cC][oO][nN][dD];
-BIF_SHTDN: '%'[sS][hH][tT][dD][nN];
-BIF_SIZE: '%'[sS][iI][zZ][eE];
-BIF_SQRT: '%'[sS][qQ][rR][tT];
-BIF_STATUS: '%'[sS][tT][aA][tT][uU][sS];
-BIF_STR: '%'[sS][tT][rR];
-BIF_SUBARR: '%'[sS][uU][bB][aA][rR][rR];
-BIF_SUBDT: '%'[sS][uU][bB][dD][tT];
-BIF_SUBST: '%'[sS][uU][bB][sS][tT];
-BIF_THIS: '%'[tT][hH][iI][sS];
-BIF_TIME: '%'[tT][iI][mM][eE];
-BIF_TIMESTAMP: '%'[tT][iI][mM][eE][sS][tT][aA][mM][pP];
-BIF_TLOOKUP: '%'[tT][lL][oO][oO][kK][uU][pP];
-BIF_TLOOKUPLT: '%'[tT][lL][oO][oO][kK][uU][pP][lL][tT];
-BIF_TLOOKUPLE: '%'[tT][lL][oO][oO][kK][uU][pP][lL][eE];
-BIF_TLOOKUPGT: '%'[tT][lL][oO][oO][kK][uU][pP][gG][tT];
-BIF_TLOOKUPGE: '%'[tT][lL][oO][oO][kK][uU][pP][gG][eE];
-BIF_TRIM: '%'[tT][rR][iI][mM];
-BIF_TRIML: '%'[tT][rR][iI][mM][lL];
-BIF_TRIMR: '%'[tT][rR][iI][mM][rR];
-BIF_UCS2: '%'[uU][cC][sS]'2';
-BIF_UNS: '%'[uU][nN][sS];
-BIF_UNSH: '%'[uU][nN][sS][hH];
-BIF_XFOOT: '%'[xX][fF][oO][oO][tT];
-BIF_XLATE: '%'[xX][lL][aA][tT][eE];
-BIF_XML: '%'[xX][mM][lL];
-BIF_YEARS: '%'[yY][eE][aA][rR][sS];
+BIF_ABS: '%'A B S ;
+BIF_ADDR: '%'A D D R ;
+BIF_ALLOC: '%'A L L O C ;
+BIF_BITAND: '%'B I T A N D ;
+BIF_BITNOT: '%'B I T N O T ;
+BIF_BITOR: '%'B I T O R ;
+BIF_BITXOR: '%'B I T X O R ;
+BIF_CHAR: '%'C H A R ;
+BIF_CHECK: '%'C H E C K ;
+BIF_CHECKR: '%'C H E C K R ;
+BIF_DATE: '%'D A T E ;
+BIF_DAYS: '%'D A Y S ;
+BIF_DEC: '%'D E C ;
+BIF_DECH: '%'D E C H ;
+BIF_DECPOS: '%'D E C P O S ;
+BIF_DIFF: '%'D I F F ;
+BIF_DIV: '%'D I V ;
+BIF_EDITC: '%'E D I T C ;
+BIF_EDITFLT: '%'E D I T F L T ;
+BIF_EDITW: '%'E D I T W ;
+BIF_ELEM: '%'E L E M ;
+BIF_EOF: '%'E O F ;
+BIF_EQUAL: '%'E Q U A L ;
+BIF_ERROR: '%'E R R O R ;
+BIF_FIELDS: '%'F I E L D S ;
+BIF_FLOAT: '%'F L O A T ;
+BIF_FOUND: '%'F O U N D ;
+BIF_GRAPH: '%'G R A P H ;
+BIF_HANDLER: '%'H A N D L E R ;
+BIF_HOURS: '%'H O U R S ;
+BIF_INT: '%'I N T ;
+BIF_INTH: '%'I N T H ;
+BIF_KDS: '%'K D S ;
+BIF_LEN: '%'L E N ;
+BIF_LOOKUP: '%'L O O K U P ;
+BIF_LOOKUPLT: '%'L O O K U P L T ;
+BIF_LOOKUPLE: '%'L O O K U P L E ;
+BIF_LOOKUPGT: '%'L O O K U P G T ;
+BIF_LOOKUPGE: '%'L O O K U P G E ;
+BIF_MINUTES: '%'M I N U T E S ;
+BIF_MONTHS: '%'M O N T H S ;
+BIF_MSECONDS: '%'M S E C O N D S ;
+BIF_NULLIND: '%'N U L I N D ;
+BIF_OCCUR: '%'O C U R ;
+BIF_OPEN: '%'O P E N ;
+BIF_PADDR: '%'P A D D R ;
+BIF_PARMS: '%'P A R M S ;
+BIF_PARMNUM: '%'P A R M N U M ;
+BIF_REALLOC: '%'R E A L L O C ;
+BIF_REM: '%'R E M ;
+BIF_REPLACE: '%'R E P L A C E ;
+BIF_SCAN: '%'S C A N ;
+BIF_SCANRPL: '%'S C A N R P L ;
+BIF_SECONDS: '%'S E C O N D ;
+BIF_SHTDN: '%'S H T D N ;
+BIF_SIZE: '%'S I Z E ;
+BIF_SQRT: '%'S Q R T ;
+BIF_STATUS: '%'S T A T U S ;
+BIF_STR: '%'S T R ;
+BIF_SUBARR: '%'S U B A R R ;
+BIF_SUBDT: '%'S U B D T ;
+BIF_SUBST: '%'S U B S T ;
+BIF_THIS: '%'T H I S ;
+BIF_TIME: '%'T I M E ;
+BIF_TIMESTAMP: '%'T I M E S T A M P ;
+BIF_TLOOKUP: '%'T L O O K U P ;
+BIF_TLOOKUPLT: '%'T L O O K U P L T ;
+BIF_TLOOKUPLE: '%'T L O O K U P L E ;
+BIF_TLOOKUPGT: '%'T L O O K U P G T ;
+BIF_TLOOKUPGE: '%'T L O O K U P G E ;
+BIF_TRIM: '%'T R I M ;
+BIF_TRIML: '%'T R I M L ;
+BIF_TRIMR: '%'T R I M R ;
+BIF_UCS2: '%'U C S '2';
+BIF_UNS: '%'U N S ;
+BIF_UNSH: '%'U N S H ;
+BIF_XFOOT: '%'X F O O T ;
+BIF_XLATE: '%'X L A T E ;
+BIF_XML: '%'X M L ;
+BIF_YEARS: '%'Y E A R S ;
 
 // Symbolic Constants
-SPLAT_ALL: '*'[aA][lL][lL];
-SPLAT_NONE: '*'[nN][oO][nN][eE];
-SPLAT_YES: '*'[yY][eE][sS];
-SPLAT_NO: '*'[nN][oO];
-SPLAT_ILERPG: '*'[iI][lL][eE][rR][pP][gG];
-SPLAT_COMPAT: '*'[cC][oO][mM][pP][aA][tT];
-SPLAT_CRTBNDRPG: '*'[cC][rR][tT][bB][nN][dD][rR][pP][gG];
-SPLAT_CRTRPGMOD: '*'[cC][rR][tT][rR][pP][gG][mM][oO][dD];
-SPLAT_VRM: '*'[vV][0-9][rR][0-9][mM][0-9];
-SPLAT_ALLG: '*'[aA][lL][lL][gG];
-SPLAT_ALLU: '*'[aA][lL][lL][uU];
-SPLAT_ALLTHREAD: '*'[aA][lL][lL][tT][hH][rR][eE][aA][dD];
-SPLAT_ALLX: '*'[aA][lL][lL][xX];
-SPLAT_BLANKS: ('*'[bB][lL][aA][nN][kK][sS] | '*'[bB][lL][aA][nN][kK]);
-SPLAT_CANCL: '*'[cC][aA][nN][cC][lL];
-SPLAT_CYMD: '*'[cC][yY][mM][dD]('0' | '/' | '-' | '.' | ',' | '&')?;
-SPLAT_CMDY: '*'[cC][mM][dD][yY]('0' | '/' | '-' | '.' | ',' | '&')?;
-SPLAT_CDMY: '*'[cC][dD][mM][yY]('0' | '/' | '-' | '.' | ',' | '&')?;
-SPLAT_MDY: '*'[mM][dD][yY]('0' | '/' | '-' | '.' | ',' | '&')?;
-SPLAT_DMY: '*'[dD][mM][yY]('0' | '/' | '-' | '.' | ',' | '&')?;
-SPLAT_DFT: '*'[dD][fF][tT];
-SPLAT_YMD: '*'[yY][mM][dD]('0' | '/' | '-' | '.' | ',' | '&')?;
-SPLAT_JUL: '*'[jJ][uU][lL]('0' | '/' | '-' | '.' | ',' | '&')?;
-SPLAT_JAVA: '*'[jJ][aA][vV][aA];
-SPLAT_ISO: '*'[iI][sS][oO]('0' | '-')?;
-SPLAT_USA: '*'[uU][sS][aA]('0' | '/')?;
-SPLAT_EUR: '*'[eE][uU][rR]('0' | '.')?;
-SPLAT_JIS: '*'[jJ][iI][sS]('0' | '-')?;
-SPLAT_DATE: '*'[dD][aA][tT][eE];
-SPLAT_DAY:  '*'[dD][aA][yY];
-SPlAT_DETC: '*'[dD][eE][tT][cC];
-SPLAT_DETL: '*'[dD][eE][tT][lL];
-SPLAT_DTAARA: '*'[dD][tT][aA][aA][rR][aA];
-SPLAT_END:  '*'[eE][nN][dD];
-SPLAT_ENTRY: '*'[eE][nN][tT][rR][yY];
-SPLAT_EQUATE: '*'[eE][qQ][uU][aA][tT][eE];
-SPLAT_EXTDFT: '*'[eE][xX][tT][dD][fF][tT];
-SPLAT_EXT: '*'[eE][xX][tT];
-SPLAT_FILE: '*'[fF][iI][lL][eE];
-SPLAT_GETIN: '*'[gG][eE][tT][iI][nN];
-SPLAT_HIVAL: '*'[hH][iI][vV][aA][lL];
-SPLAT_INIT: '*'[iI][nN][iI][tT];
-SPLAT_INDICATOR: ('*'[iI][nN][0-9][0-9] | '*'[iI][nN]'('[0-9][0-9]')');
-SPLAT_INZSR: '*'[iI][nN][zZ][sS][rR];
-SPLAT_IN: '*'[iI][nN];
-SPLAT_INPUT: '*'[iI][nN][pP][uU][tT];
-SPLAT_OUTPUT: '*'[oO][uU][tT][pP][uU][tT];
-SPLAT_JOBRUN: '*'[jJ][oO][bB][rR][uU][nN];
-SPLAT_JOB: '*'[jJ][oO][bB];
-SPLAT_LDA: '*'[lL][dD][aA];
-SPLAT_LIKE: '*'[lL][iI][kK][eE];
-SPLAT_LONGJUL: '*'[lL][oO][nN][gG][jJ][uU][lL];
-SPLAT_LOVAL: '*'[lL][oO][vV][aA][lL];
-SPLAT_KEY: '*'[kK][eE][yY];
-SPLAT_MONTH: '*'[mM][oO][nN][tT][hH];
-SPLAT_NEXT: '*'[nN][eE][xX][tT];
-SPLAT_NOIND: '*'[nN][oO][iI][nN][dD];
-SPLAT_NOKEY: '*'[nN][oO][kK][eE][yY];
-SPLAT_NULL: '*'[nN][uU][lL][lL];
-SPLAT_OFL: '*'[oO][fF][lL];
-SPLAT_ON: '*'[oO][nN];
-SPLAT_ONLY: '*'[oO][nN][lL][yY];
-SPLAT_OFF: '*'[oO][fF][fF];
-SPLAT_PDA: '*'[pP][dD][aA];
-SPLAT_PLACE: '*'[pP][lL][aA][cC][eE];
-SPLAT_PSSR: '*'[pP][sS][sS][rR];
-SPLAT_ROUTINE: '*'[rR][oO][uU][tT][iI][nN][eE];
-SPLAT_START: '*'[sS][tT][aA][rR][tT];
-SPLAT_SYS: '*'[sS][yY][sS];
-SPLAT_TERM: '*'[tT][eE][rR][mM];
-SPLAT_TOTC: '*'[tT][oO][tT][cC];
-SPLAT_TOTL: '*'[tT][oO][tT][lL];
-SPLAT_USER: '*'[uU][sS][eE][rR];
-SPLAT_VAR: '*'[vV][aA][rR];
-SPLAT_YEAR: '*'[yY][eE][aA][rR];
-SPLAT_ZEROS: ('*'[zZ][eE][rR][oO][sS] | '*'[zZ][eE][rR][oO]);
-SPLAT_HMS: '*'[hH][mM][sS]('0' | '/' | '-' | '.' | ',' | '&')?;
-SPLAT_INLR: '*'[iI][nN][lL][rR];
-SPLAT_INOF: '*'[iI][nN][oO][fF];
-SPLAT_DATA: '*'[dD][aA][tT][aA];
-SPLAT_ASTFILL: '*'[aA][sS][tT][fF][iI][lL];
-SPLAT_CURSYM: '*'[cC][uU][rR][sS][yY][mM];
-SPLAT_MAX: '*'[mM][aA][xX];
-SPLAT_LOCK: '*'[lL][oO][cC][kK];
-SPLAT_PROGRAM: '*'[pP][rR][oO][gG][rR][aA][mM];
-SPLAT_EXTDESC: '*'[eE][xX][tT][dD][eE][sS][cC];
+SPLAT_ALL: '*'A L L ;
+SPLAT_NONE: '*'N O N E ;
+SPLAT_YES: '*'Y E S ;
+SPLAT_NO: '*'N O ;
+SPLAT_ILERPG: '*'I L E R P G ;
+SPLAT_COMPAT: '*'C O M P A T ;
+SPLAT_CRTBNDRPG: '*'C R T B N D R P G ;
+SPLAT_CRTRPGMOD: '*'C R T R P G M O D ;
+SPLAT_VRM: '*'V [0-9]R [0-9]M [0-9];
+SPLAT_ALLG: '*'A L L G ;
+SPLAT_ALLU: '*'A L L U ;
+SPLAT_ALLTHREAD: '*'A L L T H R E A D ;
+SPLAT_ALLX: '*'A L L X ;
+SPLAT_BLANKS: ('*'B L A N K S  | '*'B L A N K );
+SPLAT_CANCL: '*'C A N C L ;
+SPLAT_CYMD: '*'C Y M D ('0' | '/' | '-' | '.' | ',' | '&')?;
+SPLAT_CMDY: '*'C M D Y ('0' | '/' | '-' | '.' | ',' | '&')?;
+SPLAT_CDMY: '*'C D M Y ('0' | '/' | '-' | '.' | ',' | '&')?;
+SPLAT_MDY: '*'M D Y ('0' | '/' | '-' | '.' | ',' | '&')?;
+SPLAT_DMY: '*'D M Y ('0' | '/' | '-' | '.' | ',' | '&')?;
+SPLAT_DFT: '*'D F T ;
+SPLAT_YMD: '*'Y M D ('0' | '/' | '-' | '.' | ',' | '&')?;
+SPLAT_JUL: '*'J U L ('0' | '/' | '-' | '.' | ',' | '&')?;
+SPLAT_JAVA: '*'J A V A ;
+SPLAT_ISO: '*'I S O ('0' | '-')?;
+SPLAT_USA: '*'U S A ('0' | '/')?;
+SPLAT_EUR: '*'E U R ('0' | '.')?;
+SPLAT_JIS: '*'J I S ('0' | '-')?;
+SPLAT_DATE: '*'D A T E ;
+SPLAT_DAY:  '*'D A Y ;
+SPlAT_DETC: '*'D E T C ;
+SPLAT_DETL: '*'D E T L ;
+SPLAT_DTAARA: '*'D T A A R A ;
+SPLAT_END:  '*'E N D ;
+SPLAT_ENTRY: '*'E N T R Y ;
+SPLAT_EQUATE: '*'E Q U A T E ;
+SPLAT_EXTDFT: '*'E X T D F T ;
+SPLAT_EXT: '*'E X T ;
+SPLAT_FILE: '*'F I L E ;
+SPLAT_GETIN: '*'G E T I N ;
+SPLAT_HIVAL: '*'H I V A L ;
+SPLAT_INIT: '*'I N I T ;
+SPLAT_INDICATOR: ('*'I N [0-9][0-9] | '*'I N '('[0-9][0-9]')');
+SPLAT_INZSR: '*'I N Z S R ;
+SPLAT_IN: '*'I N ;
+SPLAT_INPUT: '*'I N P U T ;
+SPLAT_OUTPUT: '*'O U T P U T ;
+SPLAT_JOBRUN: '*'J O B R U N ;
+SPLAT_JOB: '*'J O B ;
+SPLAT_LDA: '*'L D A ;
+SPLAT_LIKE: '*'L I K E ;
+SPLAT_LONGJUL: '*'L O N G J U L ;
+SPLAT_LOVAL: '*'L O V A L ;
+SPLAT_KEY: '*'K E Y ;
+SPLAT_MONTH: '*'M O N T H ;
+SPLAT_NEXT: '*'N E X T ;
+SPLAT_NOIND: '*'N O I N D ;
+SPLAT_NOKEY: '*'N O K E Y ;
+SPLAT_NULL: '*'N U L L ;
+SPLAT_OFL: '*'O F L ;
+SPLAT_ON: '*'O N ;
+SPLAT_ONLY: '*'O N L Y ;
+SPLAT_OFF: '*'O F F ;
+SPLAT_PDA: '*'P D A ;
+SPLAT_PLACE: '*'P L A C E ;
+SPLAT_PSSR: '*'P S S R ;
+SPLAT_ROUTINE: '*'R O U T I N E ;
+SPLAT_START: '*'S T A R T ;
+SPLAT_SYS: '*'S Y S ;
+SPLAT_TERM: '*'T E R M ;
+SPLAT_TOTC: '*'T O T C ;
+SPLAT_TOTL: '*'T O T L ;
+SPLAT_USER: '*'U S E R ;
+SPLAT_VAR: '*'V A R ;
+SPLAT_YEAR: '*'Y E A R ;
+SPLAT_ZEROS: ('*'Z E R O S  | '*'Z E R O );
+SPLAT_HMS: '*'H M S ('0' | '/' | '-' | '.' | ',' | '&')?;
+SPLAT_INLR: '*'I N L R ;
+SPLAT_INOF: '*'I N O F ;
+SPLAT_DATA: '*'D A T A ;
+SPLAT_ASTFILL: '*'A S T F I L ;
+SPLAT_CURSYM: '*'C U R S Y M ;
+SPLAT_MAX: '*'M A X ;
+SPLAT_LOCK: '*'L O C K ;
+SPLAT_PROGRAM: '*'P R O G R A M ;
+SPLAT_EXTDESC: '*'E X T D E S C ;
 //Durations
-SPLAT_D: '*'{getLastTokenType() == COLON}? [dD];
-SPLAT_H: '*'{getLastTokenType() == COLON}? [hH];
-SPLAT_HOURS: '*'{getLastTokenType() == COLON}? [hH][oO][uU][rR][sS];
-SPLAT_DAYS:  SPLAT_DAY[sS]{getLastTokenType() == COLON}?;
-SPLAT_M: '*'{getLastTokenType() == COLON}? [mM];
-SPLAT_MINUTES: '*'{getLastTokenType() == COLON}? [mM][iI][nN][uU][tT][eE][sS];
-SPLAT_MONTHS: SPLAT_MONTH[sS];
-SPLAT_MN: '*'{getLastTokenType() == COLON}? [mM][nN]; //Minutes
-SPLAT_MS: '*'{getLastTokenType() == COLON}? [mM][sS]; //Minutes
-SPLAT_MSECONDS: '*'{getLastTokenType() == COLON}? [mM][sS][eE][cC][oO][nN][dD][sS];
-SPLAT_S: '*'{getLastTokenType() == COLON}? [sS];
-SPLAT_SECONDS: '*'{getLastTokenType() == COLON}? [sS][eE][cC][oO][nN][dD][sS];
-SPLAT_Y: '*'{getLastTokenType() == COLON}? [yY];
-SPLAT_YEARS: SPLAT_YEAR[sS]{getLastTokenType() == COLON}?;
+SPLAT_D: '*'{getLastTokenType() == COLON}? D ;
+SPLAT_H: '*'{getLastTokenType() == COLON}? H ;
+SPLAT_HOURS: '*'{getLastTokenType() == COLON}? H O U R S ;
+SPLAT_DAYS: '*' {getLastTokenType() == COLON}? D A Y S;
+SPLAT_M: '*'{getLastTokenType() == COLON}? M ;
+SPLAT_MINUTES: '*'{getLastTokenType() == COLON}? M I N U T E S ;
+SPLAT_MONTHS: '*'{getLastTokenType() == COLON}? M O N T H S ;
+SPLAT_MN: '*'{getLastTokenType() == COLON}? M N ; //Minutes
+SPLAT_MS: '*'{getLastTokenType() == COLON}? M S ; //Minutes
+SPLAT_MSECONDS: '*'{getLastTokenType() == COLON}? M S E C O N D S ;
+SPLAT_S: '*'{getLastTokenType() == COLON}? S ;
+SPLAT_SECONDS: '*'{getLastTokenType() == COLON}? S E C O N D S ;
+SPLAT_Y: '*'{getLastTokenType() == COLON}? Y ;
+SPLAT_YEARS: '*' {getLastTokenType() == COLON}? Y E A R S;
 
 
 // Reserved Words
-UDATE : [uU] [dD] [aA] [tT] [eE] ;
-DATE : '*' [dD] [aA] [tT] [eE] ;
-UMONTH : [uU] [mM] [oO] [nN] [tT] [hH] ;
-MONTH : '*' [mM] [oO] [nN] [tT] [hH] ;
-UYEAR : [uU] [yY] [eE] [aA] [rR] ;
-YEAR : '*' [yY] [eE] [aA] [rR] ;
-UDAY : [uU] [dD] [aA] [yY] ;
-DAY : '*' [dD] [aA] [yY] ;
-PAGE : [pP] [aA] [gG] [eE] [1-7]? ;
+UDATE : U  D  A  T  E  ;
+DATE : '*' D  A  T  E  ;
+UMONTH : U  M  O  N  T  H  ;
+MONTH : '*' M  O  N  T  H  ;
+UYEAR : U  Y  E  A  R  ;
+YEAR : '*' Y  E  A  R  ;
+UDAY : U  D  A  Y  ;
+DAY : '*' D  A  Y  ;
+PAGE : P  A  G  E  [1-7]? ;
 
 
 //DataType
-CHAR: [Cc][Hh][Aa][Rr];
-VARCHAR: [Va][Aa][Rr][Cc][Hh][Aa][Rr];
-UCS2: [Uu][Cc][Ss][2];
-DATE_: [Dd][Aa][Tt][Ee];
-VARUCS2: [Va][Aa][Rr][Uu][Cc][Ss][2];
-GRAPH: [Gg][Rr][Aa][Pp][Hh];
-VARGRAPH: [Va][Aa][Rr][Gg][Rr][Aa][Pp][Hh];
-IND: [Ii][Nn][Dd];
-PACKED: [Pp][Aa][Cc][Kk][Ee][Dd];
-ZONED: [Zz][Oo][Nn][Ee][Dd];
-BINDEC: [Bb][Ii][Nn][Dd][Ee][Cc];
-INT: [Ii][Nn][Tt];
-UNS: [Uu][Nn][Ss];
-FLOAT: [Ff][Ll][Oo][Aa][Tt];
-TIME: [Tt][Ii][Mm][Ee];
-TIMESTAMP: [Tt][Ii][Mm][Ee][Ss][Tt][Aa][Mm][Pp];
-POINTER: [Pp][Oo][Ii][Nn][Tt][Ee][Rr];
-OBJECT: [Oo][Bb][Jj][Ee][Cc][Tt];
+CHAR: C H A R ;
+VARCHAR: [Va]A R C H A R ;
+UCS2: U C S [2];
+DATE_: D A T E ;
+VARUCS2: [Va]A R U C S [2];
+GRAPH: G R A P H ;
+VARGRAPH: [Va]A R G R A P H ;
+IND: I N D ;
+PACKED: P A C K E D ;
+ZONED: Z O N E D ;
+BINDEC: B I N D E C ;
+INT: I N T ;
+UNS: U N S ;
+FLOAT: F L O A T ;
+TIME: T I M E ;
+TIMESTAMP: T I M E S T A M P ;
+POINTER: P O I N T E R ;
+OBJECT: O B J E C T ;
 
 // More Keywords
-KEYWORD_ALIAS : [Aa][Ll][Ii][Aa][Ss];
-KEYWORD_ALIGN : [Aa][Ll][Ii][Gg][Nn];
-KEYWORD_ALT : [Aa][Ll][Tt];
-KEYWORD_ALTSEQ : [Aa][Ll][Tt][Ss][Ee][Qq];
-KEYWORD_ASCEND : [Aa][Ss][Cc][Ee][Nn][Dd];
-KEYWORD_BASED : [Bb][Aa][Ss][Ee][Dd];
-KEYWORD_CCSID : [Cc][Cc][Ss][Ii][Dd];
-KEYWORD_CLASS : [Cc][Ll][Aa][Ss][Ss];
-KEYWORD_CONST : [Cc][Oo][Nn][Ss][Tt];
-KEYWORD_CTDATA : [Cc][Tt][Dd][Aa][Tt][Aa];
-KEYWORD_DATFMT : [Dd][Aa][Tt][Ff][Mm][Tt];
-KEYWORD_DESCEND : [Dd][Ee][Ss][Cc][Ee][Nn][Dd];
-KEYWORD_DIM : [Dd][Ii][Mm];
-KEYWORD_DTAARA : [Dd][Tt][Aa][Aa][Rr][Aa];
-KEYWORD_EXPORT : [Ee][Xx][Pp][Oo][Rr][Tt];
-KEYWORD_EXT : [Ee][Xx][Tt];
-KEYWORD_EXTFLD : [Ee][Xx][Tt][Ff][Ll][Dd];
-KEYWORD_EXTFMT : [Ee][Xx][Tt][Ff][Mm][Tt];
-KEYWORD_EXTNAME : [Ee][Xx][Tt][Nn][Aa][Mm][Ee];
-KEYWORD_EXTPGM : [Ee][Xx][Tt][Pp][Gg][Mm];
-KEYWORD_EXTPROC : [Ee][Xx][Tt][Pp][Rr][Oo][Cc];
-KEYWORD_FROMFILE : [Ff][Rr][Oo][Mm][Ff][Ii][Ll][Ee];
-KEYWORD_IMPORT : [Ii][Mm][Pp][Oo][Rr][Tt];
-KEYWORD_INZ : [Ii][Nn][Zz];
-KEYWORD_LEN : [Ll][Ee][Nn];
-KEYWORD_LIKE : [Ll][Ii][Kk][Ee];
-KEYWORD_LIKEDS : [Ll][Ii][Kk][Ee][Dd][Ss];
-KEYWORD_LIKEFILE : [Ll][Ii][Kk][Ee][Ff][Ii][Ll][Ee];
-KEYWORD_LIKEREC : [Ll][Ii][Kk][Ee][Rr][Ee][Cc];
-KEYWORD_NOOPT : [Nn][Oo][Oo][Pp][Tt];
-KEYWORD_OCCURS : [Oo][Cc][Cc][Uu][Rr][Ss];
-KEYWORD_OPDESC : [Oo][Pp][Dd][Ee][Ss][Cc];
-KEYWORD_OPTIONS : [Oo][Pp][Tt][Ii][Oo][Nn][Ss];
-KEYWORD_OVERLAY : [Oo][Vv][Ee][Rr][Ll][Aa][Yy];
-KEYWORD_PACKEVEN : [Pp][Aa][Cc][Kk][Ee][Vv][Ee][Nn];
-KEYWORD_PERRCD : [Pp][Ee][Rr][Rr][Cc][Dd];
-KEYWORD_PREFIX : [Pp][Rr][Ee][Ff][Ii][Xx];
-KEYWORD_POS : [Pp][Oo][Ss];
-KEYWORD_PROCPTR : [Pp][Rr][Oo][Cc][Pp][Tt][Rr];
-KEYWORD_QUALIFIED : [Qq][Uu][Aa][Ll][Ii][Ff][Ii][Ee][Dd];
-KEYWORD_RTNPARM : [Rr][Tt][Nn][Pp][Aa][Rr][Mm];
-KEYWORD_STATIC : [Ss][Tt][Aa][Tt][Ii][Cc];
-KEYWORD_TEMPLATE : [Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee];
-KEYWORD_TIMFMT : [Tt][Ii][Mm][Ff][Mm][Tt];
-KEYWORD_TOFILE : [Tt][Oo][Ff][Ii][Ll][Ee];
-KEYWORD_VALUE : [Vv][Aa][Ll][Uu][Ee];
-KEYWORD_VARYING : [Vv][Aa][Rr][Yy][Ii][Nn][Gg];
+KEYWORD_ALIAS : A L I A S ;
+KEYWORD_ALIGN : A L I G N ;
+KEYWORD_ALT : A L T ;
+KEYWORD_ALTSEQ : A L T S E Q ;
+KEYWORD_ASCEND : A S C E N D ;
+KEYWORD_BASED : B A S E D ;
+KEYWORD_CCSID : C C S I D ;
+KEYWORD_CLASS : C L A S S ;
+KEYWORD_CONST : C O N S T ;
+KEYWORD_CTDATA : C T D A T A ;
+KEYWORD_DATFMT : D A T F M T ;
+KEYWORD_DESCEND : D E S C E N D ;
+KEYWORD_DIM : D I M ;
+KEYWORD_DTAARA : D T A A R A ;
+KEYWORD_EXPORT : E X P O R T ;
+KEYWORD_EXT : E X T ;
+KEYWORD_EXTFLD : E X T F L D ;
+KEYWORD_EXTFMT : E X T F M T ;
+KEYWORD_EXTNAME : E X T N A M E ;
+KEYWORD_EXTPGM : E X T P G M ;
+KEYWORD_EXTPROC : E X T P R O C ;
+KEYWORD_FROMFILE : F R O M F I L E ;
+KEYWORD_IMPORT : I M P O R T ;
+KEYWORD_INZ : I N Z ;
+KEYWORD_LEN : L E N ;
+KEYWORD_LIKE : L I K E ;
+KEYWORD_LIKEDS : L I K E D S ;
+KEYWORD_LIKEFILE : L I K E F I L E ;
+KEYWORD_LIKEREC : L I K E R E C ;
+KEYWORD_NOOPT : N O O P T ;
+KEYWORD_OCCURS : O C C U R S ;
+KEYWORD_OPDESC : O P D E S C ;
+KEYWORD_OPTIONS : O P T I O N S ;
+KEYWORD_OVERLAY : O V E R L A Y ;
+KEYWORD_PACKEVEN : P A C K E V E N ;
+KEYWORD_PERRCD : P E R R C D ;
+KEYWORD_PREFIX : P R E F I X ;
+KEYWORD_POS : P O S ;
+KEYWORD_PROCPTR : P R O C P T R ;
+KEYWORD_QUALIFIED : Q U A L I F I E D ;
+KEYWORD_RTNPARM : R T N P A R M ;
+KEYWORD_STATIC : S T A T I C ;
+KEYWORD_TEMPLATE : T E M P L A T E ;
+KEYWORD_TIMFMT : T I M F M T ;
+KEYWORD_TOFILE : T O F I L E ;
+KEYWORD_VALUE : V A L U E ;
+KEYWORD_VARYING : V A R Y I N G ;
 // File spec keywords
-KEYWORD_BLOCK : [bB][lL][oO][cC][kK]; 
-KEYWORD_COMMIT : [cC][oO][mM][mM][iI][tT]; 
-KEYWORD_DEVID : [dD][eE][vV][iI][dD]; 
-KEYWORD_EXTDESC : [eE][xX][tT][dD][eE][sS][cC];
-KEYWORD_EXTFILE  : [eE][xX][tT][fF][iI][lL][eE]; 
-KEYWORD_EXTIND  : [eE][xX][tT][iI][nN][dD]; 
-KEYWORD_EXTMBR  : [eE][xX][tT][mM][bB][rR]; 
-KEYWORD_FORMLEN : [fF][oO][rR][mM][lL][eE][nN];
-KEYWORD_FORMOFL : [fF][oO][rR][mM][oO][fF][lL];
-KEYWORD_IGNORE : [iI][gG][nN][oO][rR][eE];
-KEYWORD_INCLUDE : [iI][nN][cC][lL][uU][dD][eE];
-KEYWORD_INDDS : [iI][nN][dD][dD][sS];
-KEYWORD_INFDS : [iI][nN][fF][dD][sS];
-KEYWORD_INFSR : [iI][nN][fF][sS][rR];
-KEYWORD_KEYLOC : [kK][eE][yY][lL][oO][cC];
-KEYWORD_MAXDEV : [mM][aA][xX][dD][eE][vV];
-KEYWORD_OFLIND : [oO][fF][lL][iI][nN][dD];
-KEYWORD_PASS : [pP][aA][sS][sS];
-KEYWORD_PGMNAME : [pP][gG][mM][nN][aA][mM][eE];
-KEYWORD_PLIST : [pP][lL][iI][sS][tT];
-KEYWORD_PRTCTL : [pP][rR][tT][cC][tT][lL];
-KEYWORD_RAFDATA : [rR][aA][fF][dD][aA][tT][aA];
-KEYWORD_RECNO : [rR][eE][cC][nN][oO];
-KEYWORD_RENAME : [rR][eE][nN][aA][mM][eE];
-KEYWORD_SAVEDS : [sS][aA][vV][eE][dD][sS];
-KEYWORD_SAVEIND : [sS][aA][vV][eE][iI][nN][dD];
-KEYWORD_SFILE : [sS][fF][iI][lL][eE];
-KEYWORD_SLN : [sS][lL][nN];
-KEYWORD_SQLTYPE : [sS][qQ][lL][tT][yY][pP][eE] {_modeStack.contains(FIXED_DefSpec)}?;
-KEYWORD_USROPN : [uU][sS][rR][oO][pP][nN];
-KEYWORD_DISK : [dD][iI][sS][kK];
-KEYWORD_WORKSTN : [wW][oO][rR][kK][sS][tT][nN];
-KEYWORD_PRINTER : [pP][rR][iI][nN][tT][eE][rR];
-KEYWORD_SPECIAL : [sS][pP][eE][cC][iI][aA][lL];
-KEYWORD_KEYED : [kK][eE][yY][eE][dD];
-KEYWORD_USAGE : [uU][sS][aA][gG][eE];
-KEYWORD_PSDS: [pP][sS][dD][sS];
+KEYWORD_BLOCK : B L O C K ;
+KEYWORD_COMMIT : C O M M I T ;
+KEYWORD_DEVID : D E V I D ;
+KEYWORD_EXTDESC : E X T D E S C ;
+KEYWORD_EXTFILE  : E X T F I L E ;
+KEYWORD_EXTIND  : E X T I N D ;
+KEYWORD_EXTMBR  : E X T M B R ;
+KEYWORD_FORMLEN : F O R M L E N ;
+KEYWORD_FORMOFL : F O R M O F L ;
+KEYWORD_IGNORE : I G N O R E ;
+KEYWORD_INCLUDE : I N C L U D E ;
+KEYWORD_INDDS : I N D D S ;
+KEYWORD_INFDS : I N F D S ;
+KEYWORD_INFSR : I N F S R ;
+KEYWORD_KEYLOC : K E Y L O C ;
+KEYWORD_MAXDEV : M A X D E V ;
+KEYWORD_OFLIND : O F L I N D ;
+KEYWORD_PASS : P A S S ;
+KEYWORD_PGMNAME : P G M N A M E ;
+KEYWORD_PLIST : P L I S T ;
+KEYWORD_PRTCTL : P R T C T L ;
+KEYWORD_RAFDATA : R A F D A T A ;
+KEYWORD_RECNO : R E C N O ;
+KEYWORD_RENAME : R E N A M E ;
+KEYWORD_SAVEDS : S A V E D S ;
+KEYWORD_SAVEIND : S A V E I N D ;
+KEYWORD_SFILE : S F I L E ;
+KEYWORD_SLN : S L N ;
+KEYWORD_SQLTYPE : S Q L T Y P E {_modeStack.contains(FIXED_DefSpec)}?;
+KEYWORD_USROPN : U S R O P N ;
+KEYWORD_DISK : D I S K ;
+KEYWORD_WORKSTN : W O R K S T N ;
+KEYWORD_PRINTER : P R I N T E R ;
+KEYWORD_SPECIAL : S P E C I A L ;
+KEYWORD_KEYED : K E Y E D ;
+KEYWORD_USAGE : U S A G E ;
+KEYWORD_PSDS: P S D S ;
 
 AMPERSAND: '&';
 
 // Boolean operators
-AND : [aA] [nN] [dD] ;
-OR : [oO] [rR] ;
-NOT : [nN] [oO] [tT] ;
+AND : A  N  D  ;
+OR : O  R  ;
+NOT : N  O  T  ;
 
 // Arithmetical Operators
 PLUS : '+' ;
@@ -533,41 +533,41 @@ FREE_NUMBER: NUMBER -> type(NUMBER);
 EQUAL: '=';
 
 FREE_COLON: COLON -> type(COLON);
-FREE_BY: [bB][yY];
-FREE_TO: [tT][oO];
-FREE_DOWNTO: [dD][oO][wW][nN][tT][oO];
+FREE_BY: B Y ;
+FREE_TO: T O ;
+FREE_DOWNTO: D O W N T O ;
 FREE_ID: ID -> type(ID);
 //FREE_STRING: ['] ~[']* ['];
-HexLiteralStart: [xX]['] -> pushMode(InStringMode) ;
-DateLiteralStart: [dD]['] -> pushMode(InStringMode) ;
-TimeLiteralStart: [tT]['] -> pushMode(InStringMode) ;
-TimeStampLiteralStart: [zZ]['] -> pushMode(InStringMode) ;
-GraphicLiteralStart: [gG]['] -> pushMode(InStringMode) ;
-UCS2LiteralStart: [uU]['] -> pushMode(InStringMode) ;
-StringLiteralStart: ['] -> pushMode(InStringMode) ; 
+HexLiteralStart: X ['] -> pushMode(InStringMode) ;
+DateLiteralStart: D ['] -> pushMode(InStringMode) ;
+TimeLiteralStart: T ['] -> pushMode(InStringMode) ;
+TimeStampLiteralStart: Z ['] -> pushMode(InStringMode) ;
+GraphicLiteralStart: G ['] -> pushMode(InStringMode) ;
+UCS2LiteralStart: U ['] -> pushMode(InStringMode) ;
+StringLiteralStart: ['] -> pushMode(InStringMode) ;
 FREE_COMMENTS:  [ ]*? '//' {getCharPositionInLine()>=8}? -> pushMode(FIXED_CommentMode_HIDDEN),channel(HIDDEN) ;
 FREE_WS: [ \t] {getCharPositionInLine()>6}? [ \t]* -> skip;
 FREE_CONTINUATION : '...'
-	{_modeStack.peek()!=FIXED_CalcSpec && _modeStack.peek()!=FIXED_DefSpec}? 
+	{_modeStack.peek()!=FIXED_CalcSpec && _modeStack.peek()!=FIXED_DefSpec}?
 	WS* NEWLINE -> type(CONTINUATION);
-C_FREE_CONTINUATION_DOTS : '...' {_modeStack.peek()==FIXED_CalcSpec}? WS* NEWLINE 
-	(WORD5 [cC] ~[*] '                            ') {setText("...");} -> type(CONTINUATION);
-D_FREE_CONTINUATION_DOTS : '...' {_modeStack.peek()==FIXED_DefSpec}? WS* NEWLINE 
-	(WORD5 [dD] ~[*] '                            ') {setText("...");} -> type(CONTINUATION);
+C_FREE_CONTINUATION_DOTS : '...' {_modeStack.peek()==FIXED_CalcSpec}? WS* NEWLINE
+	(WORD5 C  ~[*] '                            ') {setText("...");} -> type(CONTINUATION);
+D_FREE_CONTINUATION_DOTS : '...' {_modeStack.peek()==FIXED_DefSpec}? WS* NEWLINE
+	(WORD5 D  ~[*] '                            ') {setText("...");} -> type(CONTINUATION);
 C_FREE_CONTINUATION: NEWLINE {_modeStack.peek()==FIXED_CalcSpec}?
 	(
 		(WORD5 ~[\r\n] [*] ~[\r\n]* NEWLINE) //Skip mid statement comments
 	|	(WORD5 ~[\r\n] [ ]* NEWLINE) //Skip mid statement blanks
 	)*
-	 WORD5 [cC] ~[*] '                            ' -> skip;
-D_FREE_CONTINUATION: NEWLINE {_modeStack.peek() == FIXED_DefSpec}?  
-	WORD5 [dD] ~[*] '                                    ' -> skip;
-F_FREE_CONTINUATION: NEWLINE {_modeStack.peek() == FIXED_FileSpec}?  
-	WORD5 [fF] ~[*] '                                    ' -> skip;
+	 WORD5 C  ~[*] '                            ' -> skip;
+D_FREE_CONTINUATION: NEWLINE {_modeStack.peek() == FIXED_DefSpec}?
+	WORD5 D  ~[*] '                                    ' -> skip;
+F_FREE_CONTINUATION: NEWLINE {_modeStack.peek() == FIXED_FileSpec}?
+	WORD5 F  ~[*] '                                    ' -> skip;
 FREE_LEAD_WS5 :   '     ' {getCharPositionInLine()==5}? -> skip;
 FREE_LEAD_WS5_Comments :  WORD5 {getCharPositionInLine()==5}? -> channel(HIDDEN);
 FREE_FREE_SPEC :  [ ][ ] {getCharPositionInLine()==7}? -> skip;
-	
+
 C_FREE_NEWLINE: NEWLINE {_modeStack.peek()==FIXED_CalcSpec}? -> popMode,popMode;
 O_FREE_NEWLINE: NEWLINE {_modeStack.peek()==FIXED_OutputSpec_PGMFIELD}? -> type(EOL),popMode,popMode,popMode;
 D_FREE_NEWLINE: NEWLINE {_modeStack.peek() == FIXED_DefSpec}? -> type(EOL),popMode,popMode;
@@ -576,114 +576,114 @@ FREE_NEWLINE:   NEWLINE {_modeStack.peek()!=FIXED_CalcSpec}? -> skip,popMode;
 FREE_SEMI: SEMI -> popMode, pushMode(FREE_ENDED);  //Captures // immediately following the semi colon
 
 mode NumberContinuation;
-NumberContinuation_CONTINUATION: ([ ]* NEWLINE)   
-	WORD5 [dD] ~[*] '                            ' [ ]* -> skip;
+NumberContinuation_CONTINUATION: ([ ]* NEWLINE)
+	WORD5 D  ~[*] '                            ' [ ]* -> skip;
 NumberPart: NUMBER -> popMode;
 NumberContinuation_ANY: -> popMode,skip;
 
 mode FixedOpCodes; //Referenced (not used)
-OP_ADD: [aA][dD][dD];
-OP_ADDDUR: OP_ADD [dD][uU][rR];
-OP_ALLOC: [aA][lL][lL][oO][cC];
-OP_ANDxx: [aA][nN][dD][0-9][0-9];
-OP_ANDEQ: [aA][nN][dD][eE][qQ];
-OP_ANDNE: [aA][nN][dD][nN][eE];
-OP_ANDLE: [aA][nN][dD][lL][eE];
-OP_ANDLT: [aA][nN][dD][lL][tT];
-OP_ANDGE: [aA][nN][dD][gG][eE];
-OP_ANDGT: [aA][nN][dD][gG][tT];
-OP_BITOFF: [bB][iI][tT][oO][fF][fF];
-OP_BITON: [bB][iI][tT][oO][nN];
-OP_CABxx: [cc][aA][bB][0-9][0-9];
-OP_CABEQ: [cC][aA][bB][eE][qQ];
-OP_CABNE: [cC][aA][bB][nN][eE];
-OP_CABLE: [cC][aA][bB][lL][eE];
-OP_CABLT: [cC][aA][bB][lL][tT];
-OP_CABGE: [cC][aA][bB][gG][eE];
-OP_CABGT: [cC][aA][bB][gG][tT];
-OP_CALL: [Cc][Aa][Ll][Ll];
-OP_CALLB: OP_CALL [bB];
-OP_CASEQ: [cC][aA][sS][eE][qQ];
-OP_CASNE: [cC][aA][sS][nN][eE];
-OP_CASLE: [cC][aA][sS][lL][eE];
-OP_CASLT: [cC][aA][sS][lL][tT];
-OP_CASGE: [cC][aA][sS][gG][eE];
-OP_CASGT: [cC][aA][sS][gG][tT];
-OP_CAS: [cC][aA][sS];
-OP_CAT: [cC][aA][tT];
-OP_CHECK: [cC][hH][eE][cC][kK];
-OP_CHECKR: [cC][hH][eE][cC][kK][rR];
-OP_COMP: [cC][oO][mM][pP];
-OP_DEFINE: [dD][eE][fF][iI][nN][eE];
-OP_DIV: [dD][iI][vV];
-OP_DO: [dD][oO];
-OP_DOUEQ: [dD][oO][uU][eE][qQ];
-OP_DOUNE: [dD][oO][uU][nN][eE];
-OP_DOULE: [dD][oO][uU][lL][eE];
-OP_DOULT: [dD][oO][uU][lL][tT];
-OP_DOUGE: [dD][oO][uU][gG][eE];
-OP_DOUGT: [dD][oO][uU][gG][tT];
-OP_DOWEQ: [dD][oO][wW][eE][qQ];
-OP_DOWNE: [dD][oO][wW][nN][eE];
-OP_DOWLE: [dD][oO][wW][lL][eE];
-OP_DOWLT: [dD][oO][wW][lL][tT];
-OP_DOWGE: [dD][oO][wW][gG][eE];
-OP_DOWGT: [dD][oO][wW][gG][tT];
-OP_END: [eE][nN][dD];
-OP_ENDCS: [eE][nN][dD][cC][sS];
-OP_EXTRCT: [eE][xX][tT][rR][cC][tT];
-OP_GOTO: [gG][oO][tT][oO];
-OP_IFEQ: [iI][fF][eE][qQ];
-OP_IFNE: [iI][fF][nN][eE];
-OP_IFLE: [iI][fF][lL][eE];
-OP_IFLT: [iI][fF][lL][tT];
-OP_IFGE: [iI][fF][gG][eE];
-OP_IFGT: [iI][fF][gG][tT];
-OP_KFLD: [kK][fF][lL][dD];
-OP_KLIST: [kK][lL][iI][sS][tT];
-OP_LOOKUP: [lL][oO][oO][kK][uU][pP];
-OP_MHHZO: [mM][hH][hH][zZ][oO];
-OP_MHLZO: [mM][hH][lL][zZ][oO];
-OP_MLHZO: [mM][lL][hH][zZ][oO];
-OP_MLLZO: [mM][lL][lL][zZ][oO];
-OP_MOVE: [mM][oO][vV][eE];
-OP_MOVEA: [mM][oO][vV][eE][aA];
-OP_MOVEL: [mM][oO][vV][eE][lL];
-OP_MULT: [mM][uU][lL][tT];
-OP_MVR: [mM][vV][rR];
-OP_OCCUR: [oO][cC][cC][uU][rR];
-OP_OREQ: [oO][rR][eE][qQ];
-OP_ORNE: [oO][rR][nN][eE];
-OP_ORLE: [oO][rR][lL][eE];
-OP_ORLT: [oO][rR][lL][tT];
-OP_ORGE: [oO][rR][gG][eE];
-OP_ORGT: [oO][rR][gG][tT];
-OP_PARM: [pP][aA][rR][mM];
-OP_PLIST: [pP][lL][iI][sS][tT];
-OP_REALLOC: [rR][eE][aA][lL][lL][oO][cC];
-OP_SCAN: [sS][cC][aA][nN];
-OP_SETOFF: [sS][eE][tT][oO][fF][fF];
-OP_SETON: [sS][eE][tT][oO][nN];
-OP_SHTDN: [sS][hH][tT][dD][nN];
-OP_SQRT: [sS][qQ][rR][tT];
-OP_SUB: [sS][uU][bB];
-OP_SUBDUR: [sS][uU][bB][dD][uU][rR];
-OP_SUBST: [sS][uU][bB][sS][tT];
-OP_TAG: [tT][aA][gG];
-OP_TESTB: [tT][eE][sS][tT][bB];
-OP_TESTN: [tT][eE][sS][tT][nN];
-OP_TESTZ: [tT][eE][sS][tT][zZ];
-OP_TIME: [tT][iI][mM][eE];
-OP_WHENEQ: [wW][hH][eE][nN][eE][qQ];
-OP_WHENNE: [wW][hH][eE][nN][nN][eE];
-OP_WHENLE: [wW][hH][eE][nN][lL][eE];
-OP_WHENLT: [wW][hH][eE][nN][lL][tT];
-OP_WHENGE: [wW][hH][eE][nN][gG][eE];
-OP_WHENGT: [wW][hH][eE][nN][gG][tT];
-OP_XFOOT: [xX][fF][oO][oO][tT];
-OP_XLATE: [xX][lL][aA][tT][eE];
-OP_Z_ADD: [zZ]'-'[aA][dD][dD];
-OP_Z_SUB: [zZ]'-'[sS][uU][bB];
+OP_ADD: A D D ;
+OP_ADDDUR: OP_ADD D U R ;
+OP_ALLOC: A L L O C ;
+OP_ANDxx: A N D [0-9][0-9];
+OP_ANDEQ: A N D E Q ;
+OP_ANDNE: A N D N E ;
+OP_ANDLE: A N D L E ;
+OP_ANDLT: A N D L T ;
+OP_ANDGE: A N D G E ;
+OP_ANDGT: A N D G T ;
+OP_BITOFF: B I T O F F ;
+OP_BITON: B I T O N ;
+OP_CABxx: C A B [0-9][0-9];
+OP_CABEQ: C A B E Q ;
+OP_CABNE: C A B N E ;
+OP_CABLE: C A B L E ;
+OP_CABLT: C A B L T ;
+OP_CABGE: C A B G E ;
+OP_CABGT: C A B G T ;
+OP_CALL: C A L L ;
+OP_CALLB: OP_CALL B ;
+OP_CASEQ: C A S E Q ;
+OP_CASNE: C A S N E ;
+OP_CASLE: C A S L E ;
+OP_CASLT: C A S L T ;
+OP_CASGE: C A S G E ;
+OP_CASGT: C A S G T ;
+OP_CAS: C A S ;
+OP_CAT: C A T ;
+OP_CHECK: C H E C K ;
+OP_CHECKR: C H E C K R ;
+OP_COMP: C O M P ;
+OP_DEFINE: D E F I N E ;
+OP_DIV: D I V ;
+OP_DO: D O ;
+OP_DOUEQ: D O U E Q ;
+OP_DOUNE: D O U N E ;
+OP_DOULE: D O U L E ;
+OP_DOULT: D O U L T ;
+OP_DOUGE: D O U G E ;
+OP_DOUGT: D O U G T ;
+OP_DOWEQ: D O W E Q ;
+OP_DOWNE: D O W N E ;
+OP_DOWLE: D O W L E ;
+OP_DOWLT: D O W L T ;
+OP_DOWGE: D O W G E ;
+OP_DOWGT: D O W G T ;
+OP_END: E N D ;
+OP_ENDCS: E N D C S ;
+OP_EXTRCT: E X T R C T ;
+OP_GOTO: G O T O ;
+OP_IFEQ: I F E Q ;
+OP_IFNE: I F N E ;
+OP_IFLE: I F L E ;
+OP_IFLT: I F L T ;
+OP_IFGE: I F G E ;
+OP_IFGT: I F G T ;
+OP_KFLD: K F L D ;
+OP_KLIST: K L I S T ;
+OP_LOOKUP: L O O K U P ;
+OP_MHHZO: M H H Z O ;
+OP_MHLZO: M H L Z O ;
+OP_MLHZO: M L H Z O ;
+OP_MLLZO: M L L Z O ;
+OP_MOVE: M O V E ;
+OP_MOVEA: M O V E A ;
+OP_MOVEL: M O V E L ;
+OP_MULT: M U L T ;
+OP_MVR: M V R ;
+OP_OCCUR: O C C U R ;
+OP_OREQ: O R E Q ;
+OP_ORNE: O R N E ;
+OP_ORLE: O R L E ;
+OP_ORLT: O R L T ;
+OP_ORGE: O R G E ;
+OP_ORGT: O R G T ;
+OP_PARM: P A R M ;
+OP_PLIST: P L I S T ;
+OP_REALLOC: R E A L L O C ;
+OP_SCAN: S C A N ;
+OP_SETOFF: S E T O F F ;
+OP_SETON: S E T O N ;
+OP_SHTDN: S H T D N ;
+OP_SQRT: S Q R T ;
+OP_SUB: S U B ;
+OP_SUBDUR: S U B D U R ;
+OP_SUBST: S U B S T ;
+OP_TAG: T A G ;
+OP_TESTB: T E S T B ;
+OP_TESTN: T E S T N ;
+OP_TESTZ: T E S T Z ;
+OP_TIME: T I M E ;
+OP_WHENEQ: W H E N E Q ;
+OP_WHENNE: W H E N N E ;
+OP_WHENLE: W H E N L E ;
+OP_WHENLT: W H E N L T ;
+OP_WHENGE: W H E N G E ;
+OP_WHENGT: W H E N G T ;
+OP_XFOOT: X F O O T ;
+OP_XLATE: X L A T E ;
+OP_Z_ADD: Z '-'A D D ;
+OP_Z_SUB: Z '-'S U B ;
 
 mode FREE_ENDED;
 FE_BLANKS : [ ]+ -> skip;
@@ -691,24 +691,24 @@ FE_COMMENTS: '//' -> popMode,pushMode(FIXED_CommentMode_HIDDEN),channel(HIDDEN) 
 FE_NEWLINE : NEWLINE -> popMode,skip;
 
 mode InStringMode;
-	//  Any char except +,- or ', or a + or - followed by more than just whitespace 
-StringContent: ( 
+	//  Any char except +,- or ', or a + or - followed by more than just whitespace
+StringContent: (
        ~['\r\n+-]
        | [+-] [ ]* {_input.LA(1)!=' ' && _input.LA(1)!='\r' && _input.LA(1)!='\n'}? // Plus is ok as long as it's not the last char
-       )+;// space or not 
+       )+;// space or not
 StringEscapedQuote: [']['] {setText("'");};
 StringLiteralEnd: ['] -> popMode;
-FIXED_FREE_STRING_CONTINUATION: ('+' [ ]* NEWLINE) 
-   {_modeStack.contains(FIXED_CalcSpec) || _modeStack.contains(FIXED_DefSpec)
+FIXED_FREE_STRING_CONTINUATION: ('+' [ ]* NEWLINE)
+  {_modeStack.contains(FIXED_CalcSpec) || _modeStack.contains(FIXED_DefSpec)
      || _modeStack.contains(FIXED_OutputSpec)}?
    -> pushMode(EatCommentLinesPlus),pushMode(EatCommentLines),skip;
-FIXED_FREE_STRING_CONTINUATION_MINUS: ('-' [ ]* NEWLINE) 
-   {_modeStack.contains(FIXED_CalcSpec) || _modeStack.contains(FIXED_DefSpec)
+FIXED_FREE_STRING_CONTINUATION_MINUS: ('-' [ ]* NEWLINE)
+  {_modeStack.contains(FIXED_CalcSpec) || _modeStack.contains(FIXED_DefSpec)
      || _modeStack.contains(FIXED_OutputSpec)}?
    -> pushMode(EatCommentLines),skip;
 FREE_STRING_CONTINUATION: {!_modeStack.contains(FIXED_CalcSpec)
      && !_modeStack.contains(FIXED_DefSpec)
-     && !_modeStack.contains(FIXED_OutputSpec)}? 
+     && !_modeStack.contains(FIXED_OutputSpec)}?
       '+' [ ]* NEWLINE '       ' [ ]* -> skip;
 FREE_STRING_CONTINUATION_MINUS: {!_modeStack.contains(FIXED_CalcSpec)
      && !_modeStack.contains(FIXED_DefSpec)
@@ -717,8 +717,8 @@ FREE_STRING_CONTINUATION_MINUS: {!_modeStack.contains(FIXED_CalcSpec)
 PlusOrMinus: [+-];
 
 mode InDoubleStringMode;
-	//  Any char except +,- or ", or a + or - followed by more than just whitespace 
-DblStringContent: ~["\r\n]+ -> type(StringContent); 
+	//  Any char except +,- or ", or a + or - followed by more than just whitespace
+DblStringContent: ~["\r\n]+ -> type(StringContent);
 DblStringLiteralEnd: ["] -> popMode,type(StringLiteralEnd);
 
 
@@ -729,24 +729,24 @@ EatCommentLinesPlus_Any: -> popMode,skip;
 // Inside continuations, ignore comment and blank lines.
 mode EatCommentLines;
 EatCommentLines_WhiteSpace: WORD5~[\r\n]{getCharPositionInLine()==6}?[ ]* NEWLINE -> skip;
-EatCommentLines_StarComment: 
+EatCommentLines_StarComment:
    WORD5~[\r\n]{getCharPositionInLine()==6}? [*] ~[\r\n]* NEWLINE -> skip;
-FIXED_FREE_STRING_CONTINUATION_Part2:  
+FIXED_FREE_STRING_CONTINUATION_Part2:
    (
-     WORD5 
-     ( [cC] {_modeStack.contains(FIXED_CalcSpec)}?
-      | [dD] {_modeStack.contains(FIXED_DefSpec)}? 
-      | [oO] {_modeStack.contains(FIXED_OutputSpec)}? 
-     ) 
-     ~[*] 
+     WORD5
+     ( C {_modeStack.contains(FIXED_CalcSpec)}?
+      | D {_modeStack.contains(FIXED_DefSpec)}?
+      | O {_modeStack.contains(FIXED_OutputSpec)}?
+     )
+     ~[*]
      ( '                            ' {_modeStack.contains(FIXED_CalcSpec)}?
        | '                                    ' {_modeStack.contains(FIXED_DefSpec)}?
        | '                                             ' {_modeStack.contains(FIXED_OutputSpec)}?
-     ) 
+     )
      ([ ]* {_modeStack.peek() == EatCommentLinesPlus}?
-      | 
+      |
      )  // If it plus continuation eat whitespace.
-   ) 
+   )
    -> type(CONTINUATION),skip ;
 //Deliberate match no char, pop out again
 EatCommentLines_NothingLeft: -> popMode,skip;
@@ -759,14 +759,14 @@ InFactor_StringContent:(
 			|| (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
 		}?
 )+ -> type(StringContent);
-		
+
 InFactor_StringEscapedQuote: ['][']
 		{(getCharPositionInLine()>=12 && getCharPositionInLine()<=24)
 			|| (getCharPositionInLine()>=36 && getCharPositionInLine()<=48)
 			|| (getCharPositionInLine()>=50 && getCharPositionInLine()<=62)
 		}?
 		 -> type(StringEscapedQuote);
-		
+
 InFactor_StringLiteralEnd: [']
 		{(getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
@@ -795,7 +795,7 @@ SQL_WS: [ \t\r\n]+ -> skip;
 //SINGLE_QTE: ['];
 //DOUBLE_QTE: ["];
 SEMI_COLON: SEMI -> type(SEMI),popMode, popMode;
-WORDS: ~[ ;\r\n] (~[;\r\n]+ ~[ ;\r\n])?; 
+WORDS: ~[ ;\r\n] (~[;\r\n]+ ~[ ;\r\n])?;
 
 // ----------------- Everything FIXED_ProcedureSpec of a tag ---------------------
 mode FIXED_ProcedureSpec;
@@ -804,35 +804,35 @@ PS_CONTINUATION_NAME : [ ]* ~[\r\n ]+ PS_CONTINUATION {setText(getText().substri
 PS_CONTINUATION : '...' ;
 
 PS_RESERVED1: '  ' {getCharPositionInLine()==23}? -> skip;
-PS_BEGIN: [bB] {getCharPositionInLine()==24}?;
-PS_END: [eE] {getCharPositionInLine()==24}?;
+PS_BEGIN: B {getCharPositionInLine()==24}?;
+PS_END: E {getCharPositionInLine()==24}?;
 PS_RESERVED2: '                   ' {getCharPositionInLine()==43}? -> skip;
 PS_KEYWORDS : ~[\r\n] {getCharPositionInLine()==44}? (~[\r\n] {getCharPositionInLine()<=80}?)*;
-PS_WS80 : [ ] {getCharPositionInLine()>80}? [ ]* NEWLINE -> skip; 
+PS_WS80 : [ ] {getCharPositionInLine()>80}? [ ]* NEWLINE -> skip;
 PS_COMMENTS80: FREE_COMMENTS80-> channel(HIDDEN),popMode;
 PS_Any: -> popMode,skip;
 
 // ----------------- Everything FIXED_DefSpec of a tag ---------------------
 mode FIXED_DefSpec;
-BLANK_SPEC :  
-	'                                                                           ' 
+BLANK_SPEC :
+	'                                                                           '
 	{getCharPositionInLine()==81}?;
 CONTINUATION_NAME : {getCharPositionInLine()<21}? [ ]* NAMECHAR+ CONTINUATION {setText(getText().substring(0,getText().length()-3).trim());} -> pushMode(CONTINUATION_ELIPSIS) ;
 CONTINUATION : '...' ;
 NAME : NAME5 NAME5 NAME5 {getCharPositionInLine()==21}? {setText(getText().trim());};
 EXTERNAL_DESCRIPTION: [eE ] {getCharPositionInLine()==22}? ;
 DATA_STRUCTURE_TYPE: [sSuU ] {getCharPositionInLine()==23}? ;
-DEF_TYPE_C: [cC][ ] {getCharPositionInLine()==25}?;
-DEF_TYPE_PI: [pP][iI] {getCharPositionInLine()==25}?;
-DEF_TYPE_PR: [pP][rR] {getCharPositionInLine()==25}?;
-DEF_TYPE_DS: [dD][sS] {getCharPositionInLine()==25}?;
-DEF_TYPE_S: [sS][ ] {getCharPositionInLine()==25}?;
+DEF_TYPE_C: C [ ] {getCharPositionInLine()==25}?;
+DEF_TYPE_PI: P I {getCharPositionInLine()==25}?;
+DEF_TYPE_PR: P R {getCharPositionInLine()==25}?;
+DEF_TYPE_DS: D S {getCharPositionInLine()==25}?;
+DEF_TYPE_S: S [ ] {getCharPositionInLine()==25}?;
 DEF_TYPE_BLANK: [ ][ ] {getCharPositionInLine()==25}?;
 DEF_TYPE: [a-zA-Z0-9 ][a-zA-Z0-9 ] {getCharPositionInLine()==25}?;
-FROM_POSITION: WORD5 [a-zA-Z0-9\+\- ][a-zA-Z0-9 ]{getCharPositionInLine()==32}?;
-TO_POSITION: WORD5[a-zA-Z0-9\+\- ][a-zA-Z0-9 ]{getCharPositionInLine()==39}? ;
-DATA_TYPE: [a-zA-Z\* ]{getCharPositionInLine()==40}? ;
-DECIMAL_POSITIONS: [0-9\+\- ][0-9 ]{getCharPositionInLine()==42}? ;
+FROM_POSITION: WORD5 [a-zA-Z0-9+\- ][a-zA-Z0-9 ]{getCharPositionInLine()==32}?;
+TO_POSITION: WORD5[a-zA-Z0-9+\- ][a-zA-Z0-9 ]{getCharPositionInLine()==39}? ;
+DATA_TYPE: [a-zA-Z* ]{getCharPositionInLine()==40}? ;
+DECIMAL_POSITIONS: [0-9+\- ][0-9 ]{getCharPositionInLine()==42}? ;
 RESERVED :  ' ' {getCharPositionInLine()==43}? -> pushMode(FREE);
 //KEYWORDS : ~[\r\n] {getCharPositionInLine()==44}? ~[\r\n]* ;
 D_WS : [ \t] {getCharPositionInLine()>=81}? [ \t]* -> skip  ; // skip spaces, tabs, newlines
@@ -844,8 +844,8 @@ CE_WS: WS ->skip;
 CE_COMMENTS80 :  ~[\r\n ] {getCharPositionInLine()>=81}? ~[\r\n]* -> channel(HIDDEN); // skip comments after 80
 CE_LEAD_WS5 :  LEAD_WS5 ->skip;
 CE_LEAD_WS5_Comments : LEAD_WS5_Comments -> channel(HIDDEN);
-CE_D_SPEC_FIXED : [dD] {_modeStack.peek()==FIXED_DefSpec && getCharPositionInLine()==6}? -> skip,popMode ;
-CE_P_SPEC_FIXED : [pP] {_modeStack.peek()==FIXED_ProcedureSpec && getCharPositionInLine()==6}? -> skip,popMode ;
+CE_D_SPEC_FIXED : D {_modeStack.peek()==FIXED_DefSpec && getCharPositionInLine()==6}? -> skip,popMode ;
+CE_P_SPEC_FIXED : P {_modeStack.peek()==FIXED_ProcedureSpec && getCharPositionInLine()==6}? -> skip,popMode ;
 CE_NEWLINE: NEWLINE ->skip;
 
 // ----------------- Everything FIXED_FileSpec of a tag ---------------------
@@ -871,18 +871,18 @@ FS_EOL : NEWLINE -> type(EOL),popMode;
 mode FIXED_OutputSpec;
 OS_BLANK_SPEC : BLANK_SPEC -> type(BLANK_SPEC);
 OS_RecordName : WORD5 WORD5 {getCharPositionInLine()==16}?;
-OS_AndOr: '         ' ([aA][nN][dD] | [oO][rR] ' ') '  ' -> 
+OS_AndOr: '         ' (A N D  | O R  ' ') '  ' ->
 	pushMode(OnOffIndicatorMode),pushMode(OnOffIndicatorMode),pushMode(OnOffIndicatorMode);
-OS_FieldReserved:  '              ' {getCharPositionInLine()==20}? 
+OS_FieldReserved:  '              ' {getCharPositionInLine()==20}?
     -> pushMode(FIXED_OutputSpec_PGMFIELD),
 	pushMode(OnOffIndicatorMode),pushMode(OnOffIndicatorMode),pushMode(OnOffIndicatorMode);
 OS_Type: [a-zA-Z ] {getCharPositionInLine()==17}?;
-OS_AddDelete: ([aA][dD][dD] | [dD][eE][lL])  {getCharPositionInLine()==20}? -> pushMode(FIXED_OutputSpec_PGM1),
-	pushMode(OnOffIndicatorMode),pushMode(OnOffIndicatorMode),pushMode(OnOffIndicatorMode); 
-OS_FetchOverflow: (' ' | [fFrR]) '  '  {getCharPositionInLine()==20}? -> pushMode(OnOffIndicatorMode),
+OS_AddDelete: ( A D D  | D E L ) {getCharPositionInLine()==20}? -> pushMode(FIXED_OutputSpec_PGM1),
+	pushMode(OnOffIndicatorMode),pushMode(OnOffIndicatorMode),pushMode(OnOffIndicatorMode);
+OS_FetchOverflow: (' ' | [fFrR]) '  ' {getCharPositionInLine()==20}? -> pushMode(OnOffIndicatorMode),
 	pushMode(OnOffIndicatorMode),pushMode(OnOffIndicatorMode);
 OS_ExceptName: WORD5 WORD5 {getCharPositionInLine()==39}?;
-OS_Space3: [ 0-9][ 0-9][ 0-9] {getCharPositionInLine()==42 || getCharPositionInLine()==45 
+OS_Space3: [ 0-9][ 0-9][ 0-9] {getCharPositionInLine()==42 || getCharPositionInLine()==45
 	|| getCharPositionInLine()==48 || getCharPositionInLine()==51}? ;
 OS_RemainingSpace:  '                             ' {getCharPositionInLine()==80}?;
 OS_Comments : CS_Comments -> channel(HIDDEN); // skip comments after 80
@@ -891,18 +891,18 @@ OS_EOL : NEWLINE -> type(EOL),popMode;//,skip;
 
 mode FIXED_OutputSpec_PGM1;
 O1_ExceptName: WORD5 WORD5 {getCharPositionInLine()==39}? -> type(OS_ExceptName);
-O1_RemainingSpace: '                                         '  {getCharPositionInLine()==80}?
-	-> type(OS_RemainingSpace),popMode;	
- 
+O1_RemainingSpace: '                                         ' {getCharPositionInLine()==80}?
+	-> type(OS_RemainingSpace),popMode;
+
 mode FIXED_OutputSpec_PGMFIELD;
 OS_FieldName: WORD5 WORD5 ~[\r\n] ~[\r\n] ~[\r\n] ~[\r\n] {getCharPositionInLine()==43}? ;
 OS_EditNames: [ 0-9A-Za-z] {getCharPositionInLine()==44}?;
 OS_BlankAfter: [ bB] {getCharPositionInLine()==45}?;
-OS_Reserved1: [ ]  {getCharPositionInLine()==46}?-> skip;
+OS_Reserved1: [ ] {getCharPositionInLine()==46}?-> skip;
 OS_EndPosition: WORD5 {getCharPositionInLine()==51}?;
 OS_DataFormat: [ 0-9A-Za-z] {getCharPositionInLine()==52}? -> pushMode(FREE);
 OS_Any: -> popMode;
-	
+
 mode FIXED_CalcSpec;
 // Symbolic Constants
 CS_Factor1_SPLAT_ALL : SPLAT_ALL {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24}? -> type(SPLAT_ALL);
@@ -1072,7 +1072,7 @@ CS_Factor2_SPLAT_SECONDS : SPLAT_SECONDS {35+8<= getCharPositionInLine() && getC
 CS_Factor2_SPLAT_YEARS : SPLAT_YEARS {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48}? -> type(SPLAT_YEARS);
 CS_Factor2_SPLAT_Y : SPLAT_Y {35+2<= getCharPositionInLine() && getCharPositionInLine()<=48}? -> type(SPLAT_Y);
 
-//Result 
+//Result
 
 //Duration
 CS_Result_SPLAT_D : SPLAT_D {49+2<= getCharPositionInLine() && getCharPositionInLine()<=62}? -> type(SPLAT_D);
@@ -1100,58 +1100,57 @@ CS_BlankFactor_EOL: '              ' {getCharPositionInLine()==25}? [ ]* NEWLINE
 CS_FactorWs: (' '
 	{(getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
-	}?  
+	}?
 		)+ -> skip;
 CS_FactorWs2: (' '
 	{(getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
-	}?  
+	}?
 		)+ -> skip;
-		
+
 /*
  * This rather awkward token matches a literal. including whitespace literals
  */
-CS_FactorContentHexLiteral: [xX][']
+CS_FactorContentHexLiteral: X [']
 	{(getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
 			|| (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
 	}?
 		 -> type(HexLiteralStart),pushMode(InFactorStringMode);
-		
-CS_FactorContentDateLiteral: [dD][']
+
+CS_FactorContentDateLiteral: D [']
 	{(getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
 			|| (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
 	}?
 		 -> type(DateLiteralStart),pushMode(InFactorStringMode);
-		
-CS_FactorContentTimeLiteral: [tT][']
+
+CS_FactorContentTimeLiteral: T [']
 	{(getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
 			|| (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
 	}?
 		-> type(TimeLiteralStart),pushMode(InFactorStringMode);
-		
-CS_FactorContentGraphicLiteral: [gG][']
+
+CS_FactorContentGraphicLiteral: G [']
 	{(getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
 			|| (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
 	}?
 		-> type(GraphicLiteralStart),pushMode(InFactorStringMode);
-		
-CS_FactorContentUCS2Literal: [uU]['] 
+
+CS_FactorContentUCS2Literal: U [']
 	{(getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
 			|| (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
 	}?
 		-> type(UCS2LiteralStart),pushMode(InFactorStringMode);
-		
-CS_FactorContentStringLiteral: ['] 
+
+CS_FactorContentStringLiteral: [']
  	{(getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
 			|| (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
 	}?
 		-> type(StringLiteralStart),pushMode(InFactorStringMode);
-				
 CS_FactorContent: (~[\r\n'\'' :]
 	{(getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
@@ -1166,10 +1165,10 @@ CS_FactorColon: ([:]
 			|| (getCharPositionInLine()>50 && getCharPositionInLine()<63)
 	}?
 		) -> type(COLON);//pushMode(FIXED_CalcSpec_2PartFactor),
-CS_OperationAndExtender_Blank:  
+CS_OperationAndExtender_Blank:
    '          '{getCharPositionInLine()==35}?;
 CS_OperationAndExtender_WS:
-	([ ]{getCharPositionInLine()>=26 && getCharPositionInLine()<36}?)+ -> skip;	
+	([ ]{getCharPositionInLine()>=26 && getCharPositionInLine()<36}?)+ -> skip;
 CS_Operation_ACQ: OP_ACQ {getCharPositionInLine()>=28 && getCharPositionInLine()<36}? -> type(OP_ACQ);
 CS_Operation_ADD: OP_ADD {getCharPositionInLine()>=28 && getCharPositionInLine()<36}? -> type(OP_ADD);
 CS_Operation_ADDDUR: OP_ADDDUR {getCharPositionInLine()>=31 && getCharPositionInLine()<36}? -> type(OP_ADDDUR);
@@ -1336,16 +1335,16 @@ CS_Operation_Z_ADD: OP_Z_ADD {getCharPositionInLine()>=30 && getCharPositionInLi
 CS_Operation_Z_SUB: OP_Z_SUB {getCharPositionInLine()>=30 && getCharPositionInLine()<36}? -> type(OP_Z_SUB);
 
 
-CS_OperationAndExtender:  
+CS_OperationAndExtender:
    ([a-zA-Z0-9\\-]
     {getCharPositionInLine()>=26 && getCharPositionInLine()<36}?)+;
 CS_OperationExtenderOpen: OPEN_PAREN{getCharPositionInLine()>=26 && getCharPositionInLine()<36}? -> type(OPEN_PAREN);
-CS_OperationExtenderClose: CLOSE_PAREN{getCharPositionInLine()>=26 && getCharPositionInLine()<36}? 
+CS_OperationExtenderClose: CLOSE_PAREN{getCharPositionInLine()>=26 && getCharPositionInLine()<36}?
   ( ' '{getCharPositionInLine()>=26 && getCharPositionInLine()<36}?)*
   {setText(getText().trim());}
   -> type(CLOSE_PAREN);
-  
-CS_FieldLength: [+\\- 0-9][+\\- 0-9][+\\- 0-9][+\\- 0-9][+\\- 0-9]  {getCharPositionInLine()==68}?;
+
+CS_FieldLength: [+\- 0-9][+\- 0-9][+\- 0-9][+\- 0-9][+\- 0-9] {getCharPositionInLine()==68}?;
 CS_DecimalPositions: [ 0-9][ 0-9] {getCharPositionInLine()==70}?
 	-> pushMode(IndicatorMode),pushMode(IndicatorMode),pushMode(IndicatorMode); // 3 Indicators in a row
 CS_WhiteSpace : [ \t] {getCharPositionInLine()>=77}? [ \t]* -> skip  ; // skip spaces, tabs, newlines
@@ -1357,21 +1356,21 @@ mode FixedOpExtender;
 CS_FixedOperationAndExtender_WS:
 	([ ]
 	  {getCharPositionInLine()>=26 && getCharPositionInLine()<36}?
-	)+ -> skip;	
-CS_FixedOperationExtenderOpen: OPEN_PAREN {getCharPositionInLine()>=26 && getCharPositionInLine()<36}? 
+	)+ -> skip;
+CS_FixedOperationExtenderOpen: OPEN_PAREN {getCharPositionInLine()>=26 && getCharPositionInLine()<36}?
 		-> type(OPEN_PAREN),popMode,pushMode(FixedOpExtender2);
 CS_FixedOperationExtenderReturn: {getCharPositionInLine()>=25 && getCharPositionInLine()<=35}? ->skip,popMode;
 
 mode FixedOpExtender2;
 CS_FixedOperationAndExtender2_WS:
 	([ ]
-		{getCharPositionInLine()>=26 && getCharPositionInLine()<36}?)+ -> skip;	
-CS_FixedOperationAndExtender2:  
+		{getCharPositionInLine()>=26 && getCharPositionInLine()<36}?)+ -> skip;
+CS_FixedOperationAndExtender2:
    ([a-zA-Z0-9\\-]
    	{getCharPositionInLine()>=26 && getCharPositionInLine()<36}?)+ -> type(CS_OperationAndExtender);
-CS_FixedOperationExtender2Close: CLOSE_PAREN {getCharPositionInLine()>=26 && getCharPositionInLine()<36}? 
+CS_FixedOperationExtender2Close: CLOSE_PAREN {getCharPositionInLine()>=26 && getCharPositionInLine()<36}?
   (' '
-  	{getCharPositionInLine()>=26 && getCharPositionInLine()<36}? 
+  	{getCharPositionInLine()>=26 && getCharPositionInLine()<36}?
   )*
   {setText(getText().trim());}
   -> type(CLOSE_PAREN);
@@ -1390,25 +1389,25 @@ FreeOpExtender_Extender: [a-zA-Z0-9\\-] -> type(CS_OperationAndExtender);
 
 mode OnOffIndicatorMode;
 BlankFlag: [ ] ->popMode,pushMode(IndicatorMode);
-NoFlag: [nN] ->popMode,pushMode(IndicatorMode);
+NoFlag: N  ->popMode,pushMode(IndicatorMode);
 
 mode IndicatorMode;
 BlankIndicator: [ ][ ] ->popMode;
 GeneralIndicator: ([0][1-9] | [1-9][0-9]) ->popMode;
-FunctionKeyIndicator: [Kk][A-NP-Ya-np-y] ->popMode;
-ControlLevelIndicator: [lL][1-9] ->popMode;
-ControlLevel0Indicator: [lL][0] ->popMode;
-LastRecordIndicator: [lL][rR] ->popMode;
-MatchingRecordIndicator: [mM][rR] ->popMode;
-HaltIndicator: [hH][1-9] ->popMode;
-ReturnIndicator: [rR][tT] ->popMode;
-ExternalIndicator: [uU][1-8] ->popMode;
-OverflowIndicator: [oO][A-GVa-gv] ->popMode;
-SubroutineIndicator: [sS][rR] ->popMode;
-AndIndicator: [aA][nN] ->popMode;
-OrIndicator: [oO][rR] ->popMode;
+FunctionKeyIndicator: K [A-NP-Ya-np-y] ->popMode;
+ControlLevelIndicator: L [1-9] ->popMode;
+ControlLevel0Indicator: L [0] ->popMode;
+LastRecordIndicator: L R  ->popMode;
+MatchingRecordIndicator: M R  ->popMode;
+HaltIndicator: H [1-9] ->popMode;
+ReturnIndicator: R T  ->popMode;
+ExternalIndicator: U [1-8] ->popMode;
+OverflowIndicator: O [A-GVa-gv] ->popMode;
+SubroutineIndicator: S R  ->popMode;
+AndIndicator: A N  ->popMode;
+OrIndicator: O R  ->popMode;
 DoubleSplatIndicator: '**';
-FirstPageIndicator: [1][pP];
+FirstPageIndicator: [1]P ;
 OtherTextIndicator: ~[\r\n]~[\r\n];
 
 
@@ -1417,25 +1416,25 @@ CSQL_EMPTY_TEXT: [ ] {getCharPositionInLine()>=8}? [ ]* -> skip;
 CSQL_TEXT: ~[\r\n] {getCharPositionInLine()>=8}? ~[\r\n]*;
 CSQL_LEADBLANK : '     ' {getCharPositionInLine()==5}?-> skip;
 CSQL_LEADWS : WORD5 {getCharPositionInLine()==5}?-> skip;
-CSQL_END : 
-	 [cC] '/' [Ee][nN][dD][-][Ee][Xx][Ee][Cc] WS ~[\r\n]* {setText(getText().trim());} -> popMode ;
-CSQL_CONT: [cC ] '+' -> skip; 
-CSQL_CSplat: [cC ] '*' -> skip,pushMode(FIXED_CalcSpec_SQL_Comments); 
+CSQL_END :
+	 C  '/' E N D [-]E X E C  WS ~[\r\n]* {setText(getText().trim());} -> popMode ;
+CSQL_CONT: [cC ] '+' -> skip;
+CSQL_CSplat: [cC ] '*' -> skip,pushMode(FIXED_CalcSpec_SQL_Comments);
 CSQL_EOL: NEWLINE -> skip;
 CSQL_Any:  -> skip,popMode;
 
 mode FIXED_CalcSpec_SQL_Comments;
 CSQLC_LEADWS : CSQL_LEADWS-> skip;
 CSQLC_CSplat : [cC ] '*' -> skip;
-CSQLC_WS : [ \t] {getCharPositionInLine()>=8}? [ \t]* -> skip; 
+CSQLC_WS : [ \t] {getCharPositionInLine()>=8}? [ \t]* -> skip;
 CSQLC_Comments : ~[\r\n ] {getCharPositionInLine()>=8}? ~[\r\n]* -> channel(HIDDEN);
 CSQLC_Any : NEWLINE? -> skip,popMode;
 
 
 mode FIXED_CalcSpec_X2;
-C2_FACTOR2_CONT: ~[\r\n]{getCharPositionInLine()==36}? 
+C2_FACTOR2_CONT: ~[\r\n]{getCharPositionInLine()==36}?
 		~[\r\n]* REPEAT_FIXED_CalcSpec_X2;
-C2_FACTOR2: ~[\r\n]{getCharPositionInLine()==36}? 
+C2_FACTOR2: ~[\r\n]{getCharPositionInLine()==36}?
 		~[\r\n]* ->popMode;
 C2_OTHER: ~('\r' | '\n') {getCharPositionInLine()<36}?  ->skip;
 
@@ -1443,28 +1442,28 @@ fragment
 REPEAT_FIXED_CalcSpec_X2 : '+' [ ]+ NEWLINE;
 
 mode FIXED_InputSpec;
-IS_BLANK_SPEC :  
-    '                                                                           ' 
+IS_BLANK_SPEC :
+    '                                                                           '
     {getCharPositionInLine()==80}? -> type(BLANK_SPEC);
 IS_FileName: WORD5_WCOLON WORD5_WCOLON {getCharPositionInLine()==16}?;
-IS_FieldReserved: '                        '  {getCharPositionInLine()==30}? -> pushMode(FIXED_I_FIELD_SPEC),skip ;
+IS_FieldReserved: '                        ' {getCharPositionInLine()==30}? -> pushMode(FIXED_I_FIELD_SPEC),skip ;
 IS_ExtFieldReserved:  '              ' {getCharPositionInLine()==20}?-> pushMode(FIXED_I_EXT_FIELD_SPEC),skip ;
 IS_LogicalRelationship :  ('AND' | 'OR '| ' OR') {getCharPositionInLine()==18}?;
-IS_ExtRecordReserved : '    '  {getCharPositionInLine()==20}? -> pushMode(FIXED_I_EXT_REC_SPEC),pushMode(IndicatorMode) ;
-IS_Sequence : WORD_WCOLON WORD_WCOLON  {getCharPositionInLine()==18}?;
-IS_Number : [ 1nN]  {getCharPositionInLine()==19}?;
+IS_ExtRecordReserved : '    ' {getCharPositionInLine()==20}? -> pushMode(FIXED_I_EXT_REC_SPEC),pushMode(IndicatorMode) ;
+IS_Sequence : WORD_WCOLON WORD_WCOLON {getCharPositionInLine()==18}?;
+IS_Number : [ 1nN] {getCharPositionInLine()==19}?;
 IS_Option: [ oO] {getCharPositionInLine()==20}? -> pushMode(IndicatorMode);
 IS_RecordIdCode:  WORD5_WCOLON WORD5_WCOLON WORD5_WCOLON WORD5_WCOLON
-		WORD_WCOLON WORD_WCOLON WORD_WCOLON WORD_WCOLON  {getCharPositionInLine()==46}?; //TODO better lexing
+		WORD_WCOLON WORD_WCOLON WORD_WCOLON WORD_WCOLON {getCharPositionInLine()==46}?; //TODO better lexing
 IS_WS : [ \t] {getCharPositionInLine()>=47}? [ \t]* -> type(WS),skip  ; // skip spaces, tabs
 IS_COMMENTS : ~[\r\n] {getCharPositionInLine()>80}? ~[\r\n]* -> channel(HIDDEN) ; // skip spaces, tabs, newlines
-IS_EOL : NEWLINE -> type(EOL),popMode; 
+IS_EOL : NEWLINE -> type(EOL),popMode;
 
 mode FIXED_I_EXT_FIELD_SPEC;
 IF_Name: WORD5_WCOLON WORD5_WCOLON {getCharPositionInLine()==30}?;
 IF_Reserved: '                  ' {getCharPositionInLine()==48}? -> skip;
 IF_FieldName: WORD5_WCOLON WORD5_WCOLON WORD_WCOLON WORD_WCOLON
-	WORD_WCOLON WORD_WCOLON  {getCharPositionInLine()==62}? ->pushMode(IndicatorMode),pushMode(IndicatorMode);
+	WORD_WCOLON WORD_WCOLON {getCharPositionInLine()==62}? ->pushMode(IndicatorMode),pushMode(IndicatorMode);
 IF_Reserved2: '  ' {getCharPositionInLine()==68}? ->pushMode(IndicatorMode),pushMode(IndicatorMode),pushMode(IndicatorMode),skip; // 3 Indicators in a row
 IF_WS : [ \t] {getCharPositionInLine()>=75}? [ \t]* -> type(WS),popMode,skip  ; // skip spaces, tabs
 
@@ -1492,8 +1491,8 @@ HS_StringLiteralStart: ['] -> type(StringLiteralStart),pushMode(InStringMode) ;
 HS_COLON: ':' -> type(COLON);
 HS_ID: [#@%$*a-zA-Z] [&#@\-$*a-zA-Z0-9_/,\.]* -> type(ID);
 HS_WhiteSpace : [ \t]+ -> skip  ; // skip spaces, tabs, newlines
-HS_CONTINUATION: NEWLINE 
-	WORD5 [hH] ~[*] -> skip;
+HS_CONTINUATION: NEWLINE
+	WORD5 H  ~[*] -> skip;
 HS_EOL : NEWLINE -> type(EOL),popMode;
 
 fragment WORD5 : ~[\r\n]~[\r\n]~[\r\n]~[\r\n]~[\r\n];
@@ -1504,3 +1503,31 @@ fragment NAMECHAR : [A-Za-z0-9$#@_ ];
 fragment INITNAMECHAR : [A-Za-z$#@];
 fragment WORD_WCOLON : ~[\r\n];//[a-zA-Z0-9 :*];
 fragment WORD5_WCOLON : WORD_WCOLON WORD_WCOLON WORD_WCOLON WORD_WCOLON WORD_WCOLON;
+
+// Case insensitive alphabet fragments
+fragment A: [aA];
+fragment B: [bB];
+fragment C: [cC];
+fragment D: [dD];
+fragment E: [eE];
+fragment F: [fF];
+fragment G: [gG];
+fragment H: [hH];
+fragment I: [iI];
+fragment J: [jJ];
+fragment K: [kK];
+fragment L: [lL];
+fragment M: [mM];
+fragment N: [nN];
+fragment O: [oO];
+fragment P: [pP];
+fragment Q: [qQ];
+fragment R: [rR];
+fragment S: [sS];
+fragment T: [tT];
+fragment U: [uU];
+fragment V: [vV];
+fragment W: [wW];
+fragment X: [xX];
+fragment Y: [yY];
+fragment Z: [zZ];
