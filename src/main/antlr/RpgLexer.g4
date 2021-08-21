@@ -25,7 +25,7 @@ END_SOURCE :  '**' {getCharPositionInLine()==2}? ~[\r\n]~[\r\n]~[\r\n]~[\r\n*]~[
 LEAD_WS5 :  '     ' {getCharPositionInLine()==5}? -> skip;
 LEAD_WS5_Comments :  WORD5 {getCharPositionInLine()==5}? -> channel(HIDDEN);
 	//5 position blank means FREE, unless..
-FREE_SPEC : {getCharPositionInLine()==5}? [  ] -> pushMode(OpCode),skip;
+FREE_SPEC : {getCharPositionInLine()==5}? [ ] -> pushMode(OpCode),skip;
     // 6th position asterisk is a comment
 COMMENT_SPEC_FIXED : {getCharPositionInLine()==5}? .'*' -> pushMode(FIXED_CommentMode),channel(HIDDEN) ;
     // X specs
@@ -1151,12 +1151,13 @@ CS_FactorContentStringLiteral: [']
 			|| (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
 	}?
 		-> type(StringLiteralStart),pushMode(InFactorStringMode);
-CS_FactorContent: (~[\r\n'\'' :]
+
+CS_FactorContent: (~[\r\n' :]
 	{(getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
 			|| (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
 	}?
 		)+;
-CS_ResultContent: (~[\r\n'\'' :]
+CS_ResultContent: (~[\r\n' :]
 	{(getCharPositionInLine()>=50 && getCharPositionInLine()<=63)}?
 		)+ -> type(CS_FactorContent);
 CS_FactorColon: ([:]
@@ -1489,7 +1490,7 @@ HS_OPEN_PAREN: OPEN_PAREN -> type(OPEN_PAREN);
 HS_CLOSE_PAREN: CLOSE_PAREN -> type(CLOSE_PAREN);
 HS_StringLiteralStart: ['] -> type(StringLiteralStart),pushMode(InStringMode) ;
 HS_COLON: ':' -> type(COLON);
-HS_ID: [#@%$*a-zA-Z] [&#@\-$*a-zA-Z0-9_/,\.]* -> type(ID);
+HS_ID: [#@%$*a-zA-Z] [&#@\-$*a-zA-Z0-9_/,.]* -> type(ID);
 HS_WhiteSpace : [ \t]+ -> skip  ; // skip spaces, tabs, newlines
 HS_CONTINUATION: NEWLINE
 	WORD5 H  ~[*] -> skip;
