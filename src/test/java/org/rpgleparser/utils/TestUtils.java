@@ -118,12 +118,13 @@ public class TestUtils {
     }
 
     public static RpgParser initialiseParser(String inputString, List<String> errors) {
-        ANTLRInputStream input;
-//		try {
-//			input = new ANTLRInputStream(new BufferedReader80(inputString));
-//		} catch (IOException e) {
-			input = new ANTLRInputStream(inputString);
-//		}
+        InputStream targetStream = new ByteArrayInputStream(inputString.getBytes());
+        CharStream input = null;
+        try {
+            input = CharStreams.fromStream(targetStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         RpgLexer lexer = new RpgLexer(input);
         vocabulary = lexer.getVocabulary();
         TokenStream tokens = new CommonTokenStream(lexer);

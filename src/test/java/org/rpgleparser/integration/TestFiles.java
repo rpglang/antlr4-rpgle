@@ -46,7 +46,7 @@ public class TestFiles {
 		}catch(Exception ignored){}
 	}
 
-	@ParameterizedTest(name = "{index}{0}")
+	@ParameterizedTest(name = "{index} - {0}")
 	@MethodSource("primeNumbers")
 	public void test(File sourceFile) throws IOException, URISyntaxException{
 		final String inputString = TestUtils.loadFile(sourceFile);
