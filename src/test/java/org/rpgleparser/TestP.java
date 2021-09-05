@@ -1,15 +1,13 @@
 package org.rpgleparser;
 
 import org.antlr.v4.runtime.CommonToken;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.rpgleparser.utils.TestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestP {
 
@@ -24,7 +22,7 @@ public class TestP {
         inputString = TestUtils.padSourceLines(inputString, false);
         List<String> errors = new ArrayList<String>();
         List<CommonToken> tokenList = TestUtils.getParsedTokens(inputString, errors);
-        assertThat(errors, is(empty()));
+        assertTrue(errors.isEmpty());
     }
     
     
@@ -38,7 +36,7 @@ public class TestP {
         inputString = TestUtils.padSourceLines(inputString, false);
         List<String> errors = new ArrayList<String>();
         List<CommonToken> tokenList = TestUtils.getParsedTokens(inputString, errors);
-        assertThat(errors, is(empty()));
+        assertTrue(errors.isEmpty());
     }
     
 

@@ -19,10 +19,8 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestUtils {
     static Vocabulary vocabulary;
@@ -120,12 +118,13 @@ public class TestUtils {
     }
 
     public static RpgParser initialiseParser(String inputString, List<String> errors) {
-        ANTLRInputStream input;
-//		try {
-//			input = new ANTLRInputStream(new BufferedReader80(inputString));
-//		} catch (IOException e) {
-			input = new ANTLRInputStream(inputString);
-//		}
+        InputStream targetStream = new ByteArrayInputStream(inputString.getBytes());
+        CharStream input = null;
+        try {
+            input = CharStreams.fromStream(targetStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         RpgLexer lexer = new RpgLexer(input);
         vocabulary = lexer.getVocabulary();
         TokenStream tokens = new CommonTokenStream(lexer);
@@ -221,18 +220,18 @@ public class TestUtils {
         List<String> errors = new ArrayList<String>();
         RpgParser parser = initialiseParser(paddedInput, errors);
         ParseTree parseTree = parser.r();
-        assertThat(errors, is(empty()));
+        assertTrue(errors.isEmpty());
         if(expectedTree.contains("\n")){
-        	assertEquals("The parse trees do not match", expectedTree, TreeUtils.printTree(parseTree, parser));
+        	assertEquals(expectedTree, TreeUtils.printTree(parseTree, parser), "The parse trees do not match");
         }else{//compare with flat tree
-        	assertEquals("The parse trees do not match", expectedTree, parseTree.toStringTree(parser));
+        	assertEquals(expectedTree, parseTree.toStringTree(parser), "The parse trees do not match");
         }
     }
 
     private static void assertParsedTokens(String paddedInput, String[] expectedTokens) {
         List<String> errors = new ArrayList<String>();
         List<CommonToken> tokenList = getParsedTokens(paddedInput, errors);
-        assertThat(errors, is(empty()));
+        assertTrue(errors.isEmpty());
         assertTokens(tokenList, expectedTokens);
     }
 
@@ -244,7 +243,7 @@ public class TestUtils {
             String message = toString(parsedTokens);
             String expected = stringTokens.hasNext() ? stringTokens.next().trim() : null;
             String parsed = commonTokens.hasNext() ? commonTokens.next().getText().trim() : null;
-            assertEquals(message, expected, parsed);
+            assertEquals(expected, parsed, message);
         }
     }
 

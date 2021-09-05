@@ -1,13 +1,13 @@
 package org.rpgleparser;
 
 import org.antlr.v4.runtime.CommonToken;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.rpgleparser.utils.TestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.rpgleparser.utils.TestUtils.*;
 
 public class TestFREE {
@@ -512,7 +512,7 @@ public class TestFREE {
         String inputString = " DCL-DS * N;\r\n" + "END-DS;";
         List<String> errors = new ArrayList<String>();
         List<CommonToken> tokenList = TestUtils.getParsedTokens(inputString, errors);
-        assertTrue("Errors expected", errors.size() > 0);
+        assertTrue(errors.size() > 0,"Errors expected");
     }
 
     @Test

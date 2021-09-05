@@ -1,16 +1,14 @@
 package org.rpgleparser;
 
 import org.antlr.v4.runtime.CommonToken;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.rpgleparser.utils.TestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.rpgleparser.utils.TestUtils.expectTokensForSourceLines;
 
 public class TestC {
@@ -34,8 +32,8 @@ public class TestC {
 //        TestUtils.showParseTree(inputString, false);
         List<String> errors = new ArrayList<String>();
         List<CommonToken> tokenList = TestUtils.getParsedTokens(inputString, errors);
-        assertThat(errors, is(empty()));
         assertEquals(RpgLexer.CS_FactorContent, tokenList.get(4).getType());
+        assertTrue(errors.isEmpty());
         assertEquals(RpgLexer.CS_OperationAndExtender, tokenList.get(5).getType());
         assertEquals(RpgLexer.CS_FactorContent, tokenList.get(6).getType());
         assertEquals("FACTOR1", tokenList.get(4).getText());
